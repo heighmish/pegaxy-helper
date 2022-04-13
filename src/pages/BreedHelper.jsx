@@ -4,7 +4,7 @@ const BreedHelper = () => {
   
   return (
       <div>
-        Breed helper
+        Coming soon!
       </div>
   );
 }

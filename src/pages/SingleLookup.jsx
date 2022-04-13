@@ -62,7 +62,7 @@ const SingleLookup = ({ model }) => {
   }
   
   return (
-      <Container maxWidth="md">
+      <Container maxWidth="md" sx = {{ display:'flex', flexDirection: 'column', gap: '10px' }}>
         <SearchBar
           searchLabel={"PegaID"}
           text={"Enter a PegaID or a comma separated pega stats as: speed, strength, lightning, wind, water, fire"}

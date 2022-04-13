@@ -6,6 +6,9 @@ import BreedHelper from './pages/BreedHelper';
 import NavBar from "./components/NavBar";
 import * as tf from '@tensorflow/tfjs';
 import './index.css';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 
 function App() {
@@ -13,7 +16,7 @@ function App() {
   useEffect(() => {
     const loadModel = async () => {
       try {
-        const model = await tf.loadLayersModel(process.env.PUBLIC_URL + 'converted_model/model.json');
+        const model = await tf.loadLayersModel(process.env.PUBLIC_URL + '/converted_model/model.json');
         setModel(model);
         console.log("Model loaded");
       } catch (err){
@@ -22,16 +25,31 @@ function App() {
     }
     loadModel();
   }, [])
+
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
   return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <BrowserRouter>
         <NavBar />
           <Routes>
             <Route path="/" element={<SingleLookup model={model}/>} />
+            <Route path="/pegaxy-helper" element={<SingleLookup model={model}/>} />
             <Route path="pega-lookup" element={<SingleLookup model={model}/>} />
             <Route path="account-lookup" element={<AccountLookup model={model}/>} />
             <Route path="breed-helper" element={<BreedHelper model={model}/>} />
         </Routes>
       </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

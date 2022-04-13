@@ -4,11 +4,13 @@ export const createPegaCard = (pega, predicted, pid=undefined) => {
     return <PegaCard 
         key={pid ? pid : pega.id}
         id={pid ? pid : pega.id}
+        name = {pega.name}
         bloodLine = {pega.bloodLine}
         breedCount = {pega.breedCount}
         breedType = {pega.breedType} 
         canBreedAt = {pega.canBreedAt} 
         canRaceAt = {pega.canRaceAt}
+        energy = {pega.energy}
         gender = {pega.gender}
         winRate = {Number(pega.winRate)}
         gold= {Number(pega.gold)}
