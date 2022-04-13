@@ -7,3 +7,10 @@ export const getModelPrediction = async (array, model) => {
     const pred = await model.predict(data).data()
     return pred[0].toFixed(3);
 }
+
+
+export const createDataSetFromJson = async (pegas, model) => {
+    const data = tf.tensor(pegas.map(p => [p.speed, p.strength, p.wind, p.water, p.fire, p.lightning]));
+    const pred = await model.predict(data).data()
+    return pred;    
+}

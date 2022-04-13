@@ -1,37 +1,40 @@
 import React, { useState } from "react";
 import { Container } from "@mui/material";
 import SearchBar from "../components/SearchBar";
-import CenteredContainer from "../components/CenteredContainer";
 import { apiCall } from "../util/api";
-import { createPegaCard } from "../util/createPegaCard";
+import { createDataSetFromJson } from "../util/model";
+import PegaTable from "../components/PegaTable";
 
-const AccountLookup = () => {
+
+const AccountLookup = ({ model }) => {
   const [searchValue, setSearchValue] = useState('');
   const [accountPegas, setAccountPegas] = useState([]);
   const handleSubmit = async () => {
     console.log("time to fetch account");
     try {
       const accountData = await apiCall(`pegas/owner/user/${searchValue}`)
-      setAccountPegas(accountData);
-      //console.log(accountData);
+      const predictions = await createDataSetFromJson(accountData, model);
+      console.log(accountData);
+      setAccountPegas(accountData.map((pega, idx) => ({
+        ...pega,
+        avgVis: ((pega.gold/pega.totalRaces) * 105 + (pega.silver/pega.totalRaces) * 44 + (pega.bronze/pega.totalRaces)* 26) || 0,
+        predicted: predictions[idx]
+      })));
+      console.log(accountData)
     } catch (err) {
       console.log(err);
     }
 
   }
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="max">
     <SearchBar
       searchLabel={"Wallet address"}
       text={"Enter a polygon wallet address"}
       submitHandler={handleSubmit}
       changeHandler={setSearchValue}
     />
-    <CenteredContainer style={{"flexDirection": "column"}}>
-      {accountPegas.map((idx, pega) => {
-        return createPegaCard(pega, idx);
-      })}
-    </CenteredContainer>
+    <PegaTable rows={accountPegas}/>
 
   </Container>
   );

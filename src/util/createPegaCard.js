@@ -2,6 +2,7 @@ import PegaCard from "../components/PegaCard"
 
 export const createPegaCard = (pega, predicted, pid=undefined) => {
     return <PegaCard 
+        key={pid ? pid : pega.id}
         id={pid ? pid : pega.id}
         bloodLine = {pega.bloodLine}
         breedCount = {pega.breedCount}

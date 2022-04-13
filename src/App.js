@@ -15,6 +15,7 @@ function App() {
       try {
         const model = await tf.loadLayersModel(process.env.PUBLIC_URL + 'converted_model/model.json');
         setModel(model);
+        console.log("Model loaded");
       } catch (err){
         console.log(err);
       }
@@ -25,9 +26,10 @@ function App() {
       <BrowserRouter>
         <NavBar />
           <Routes>
+            <Route path="/" element={<SingleLookup model={model}/>} />
             <Route path="pega-lookup" element={<SingleLookup model={model}/>} />
-            <Route path="account-lookup" element={<AccountLookup />} />
-            <Route path="breed-helper" element={<BreedHelper />} />
+            <Route path="account-lookup" element={<AccountLookup model={model}/>} />
+            <Route path="breed-helper" element={<BreedHelper model={model}/>} />
         </Routes>
       </BrowserRouter>
   );
