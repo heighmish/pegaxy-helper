@@ -47,7 +47,7 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                     <Box sx= {{ display: 'flex', gap: '10px'}}>
                         <Box sx= {{ display: 'flex', flexDirection: 'column', gap: '2.5px'}}>
                             <Typography sx={{ fontSize: 14 }} color="text.primary">
-                                {`Winrate: ${winRate*100}%`}
+                                {`Winrate: ${(winRate*100).toFixed(0)}%`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
                                 {`Gold: ${((gold/totalRaces)*100).toFixed(0)}%`}

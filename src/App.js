@@ -16,9 +16,8 @@ function App() {
   useEffect(() => {
     const loadModel = async () => {
       try {
-        const model = await tf.loadLayersModel(process.env.PUBLIC_URL + '/converted_model/model.json');
+        const model = await tf.loadLayersModel(process.env.PUBLIC_URL + '/javascript_model/model.json');
         setModel(model);
-        console.log("Model loaded");
       } catch (err){
         console.log(err);
       }
