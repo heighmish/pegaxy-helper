@@ -85,7 +85,7 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                         </Container>
                         <Container sx = {{ position: 'relative', top: -15}}>
                             <Typography sx={{ fontSize: 15 }} color="text.secondary">
-                                {speed} | {strength} | {speed} | {strength} | {speed} | {strength}
+                                {speed} | {strength} | {lightning} | {wind} | {water} | {fire}
                             </Typography>
                         </Container>
                     </Box>
