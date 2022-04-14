@@ -14,13 +14,14 @@ import AirIcon from '@mui/icons-material/Air';
 import WaterIcon from '@mui/icons-material/Water';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { orange, green, blue, yellow, red } from '@mui/material/colors';
+import { calculateAvgVis, modulateAvgVis } from '../util/helpers';
 
 const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedAt, canRaceAt, gender, winRate, gold, silver, bronze, totalRaces, motherId, fatherId, predictedVis, speed, strength, lightning, wind, water, fire}) => {
     const [avgVis, setAvgVis] = useState(0);
     useEffect(() => {
-        const val = (gold/totalRaces) * 105 + (silver/totalRaces) * 44 + (bronze/totalRaces)* 26;
+        const val = calculateAvgVis(gold, silver, bronze, totalRaces, breedType);
         setAvgVis(Number(val));
-    }, [bronze, gold, silver, totalRaces])
+    }, [bronze, gold, silver, totalRaces, breedType])
     return (
         <Card>
             <CardContent>
@@ -66,7 +67,7 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                                 {`Avg Vis: ${avgVis.toFixed(2)}`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                {`Pred Vis: ${Number(predictedVis).toFixed(2)}`}
+                                {`Pred Vis: ${Number(modulateAvgVis(predictedVis, breedType)).toFixed(2)}`}
                             </Typography>
                         </Box>
                     </Box>
