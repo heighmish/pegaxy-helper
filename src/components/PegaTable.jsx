@@ -91,6 +91,12 @@ const headCells = [
     label: 'Predicted',
   },
   {
+    id: 'metaScore',
+    numeric: true,
+    disablePadding: false,
+    label: 'Metascore /10',
+  },
+  {
     id: 'speed',
     numeric: true,
     disablePadding: false,
@@ -360,6 +366,7 @@ export default function PegaTable({ rows }) {
                       <TableCell align="right">{row.breedCount}</TableCell>
                       <TableCell align="right">{row.avgVis.toFixed(2)}</TableCell>
                       <TableCell align="right">{row.predicted.toFixed(2)}</TableCell>
+                      <TableCell align="right">{row.metaScore}</TableCell>
                       <TableCell align="right">{row.speed}</TableCell>
                       <TableCell align="right">{row.strength}</TableCell>
                       <TableCell align="right">{row.lightning}</TableCell>

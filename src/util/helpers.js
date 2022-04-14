@@ -21,3 +21,21 @@ export const modulateAvgVis = (oldAvgVis, breedType) => {
             return -1;
     }
 }
+
+export const getMetaScore = (prediction) => {
+    const quantiles = [
+        5.90823984, 
+        8.63604927, 
+        9.31120453, 
+        9.91413383,
+        10.50946388,
+        11.49509792,
+        12.87348022,
+        14.36807671,
+        17.15586357,
+        20.01042976,
+        24.84795746,
+    ]
+    const quantValue = quantiles.reduce((prev, curr) => Math.abs(curr - prediction) < Math.abs(prev - prediction) ? curr : prev);
+    return quantiles.findIndex((val) => val === quantValue);
+}

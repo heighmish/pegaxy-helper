@@ -4,7 +4,7 @@ import SearchBar from "../components/SearchBar";
 import { apiCall } from "../util/api";
 import { createDataSetFromJson } from "../util/model";
 import PegaTable from "../components/PegaTable";
-import { calculateAvgVis, modulateAvgVis } from "../util/helpers";
+import { calculateAvgVis, modulateAvgVis, getMetaScore } from "../util/helpers";
 
 
 const AccountLookup = ({ model }) => {
@@ -17,7 +17,8 @@ const AccountLookup = ({ model }) => {
       setAccountPegas(accountData.map((pega, idx) => ({
         ...pega,
         avgVis: calculateAvgVis(pega.gold, pega.silver, pega.bronze, pega.totalRaces, pega.breedType),
-        predicted: modulateAvgVis(predictions[idx], pega.breedType)
+        predicted: modulateAvgVis(predictions[idx], pega.breedType),
+        metaScore: getMetaScore(predictions[idx]),
       })));
     } catch (err) {
       console.log(err);
