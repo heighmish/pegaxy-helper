@@ -8,8 +8,8 @@ import { Box } from "@mui/material";
 
 const SearchBar = ({searchLabel, submitHandler, text, changeHandler}) => {
     return (
-        <Box>
-            <Box m={2} sx={{textAlign: "center"}}>
+        <Box m={2}>
+            <Box m={1} sx={{textAlign: "center"}}>
                 <Typography variant="body">{text}</Typography>
             </Box>
             <CenteredContainer maxWidth="md">

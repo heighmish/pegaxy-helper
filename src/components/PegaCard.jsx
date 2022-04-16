@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import SpeedIcon from '@mui/icons-material/Speed';
-import StatIcon from './StatIcon';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import BoltIcon from '@mui/icons-material/Bolt';
-import AirIcon from '@mui/icons-material/Air';
-import WaterIcon from '@mui/icons-material/Water';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import { orange, green, blue, yellow, red } from '@mui/material/colors';
+
 import { calculateAvgVis } from '../util/helpers';
+import StatBar from './StatBar';
 
 const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedAt, canRaceAt, gender, winRate, gold, silver, bronze, totalRaces, motherId, fatherId, predictedVis, speed, strength, lightning, wind, water, fire, metaScore}) => {
     const [avgVis, setAvgVis] = useState(0);
@@ -71,21 +64,7 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                             </Typography>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Container sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', flex: 1}}>
-                            <StatIcon color={orange[500]} value={((speed/9)*100)} icon={<SpeedIcon/>}/>
-                            <StatIcon color={green[500]} value={((strength/9)*100)} icon={<FitnessCenterIcon/>}/>
-                            <StatIcon color={yellow[500]} value={((lightning/9)*100)} icon={<BoltIcon/>}/>
-                            <StatIcon color={'white'} value={((wind/9)*100)} icon={<AirIcon/>}/>
-                            <StatIcon color={blue[500]} value={((water/9)*100)} icon={<WaterIcon/>}/>
-                            <StatIcon color={red[500]} value={((fire/9)*100)} icon={<LocalFireDepartmentIcon/>}/>
-                        </Container>
-                        <Container sx = {{ position: 'relative', top: -15}}>
-                            <Typography sx={{ fontSize: 15 }} color="text.secondary">
-                                {speed} | {strength} | {lightning} | {wind} | {water} | {fire}
-                            </Typography>
-                        </Container>
-                    </Box>
+                    <StatBar speed={speed} strength={strength} fire={fire} lightning={lightning} water={water} wind={wind} />
                 </Box>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>

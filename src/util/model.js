@@ -14,3 +14,8 @@ export const createDataSetFromJson = async (pegas, model) => {
     const pred = await model.predict(data).data()
     return pred;    
 }
+
+export const predictDataSet = async (data, model) => {
+    const pred = await model.predict(data).data()
+    return pred;  
+}

@@ -1,3 +1,6 @@
+import * as tf from '@tensorflow/tfjs';
+import { predictDataSet } from './model';
+
 export const calculateAvgVis = (gold, silver, bronze, totalRaces, breedType) => {
     let vis;
     switch (breedType) {
@@ -58,3 +61,55 @@ export const getMetaScore = (prediction) => {
     const quantValue = quantiles.reduce((prev, curr) => Math.abs(curr - prediction) < Math.abs(prev - prediction) ? curr : prev);
     return quantiles.findIndex((val) => val === quantValue);
 }
+
+export const getStatsFromJson = (pega) => {
+    return [
+        pega.speed,
+        pega.strength,
+        pega.lightning,
+        pega.wind,
+        pega.water,
+        pega.fire
+    ]
+}
+
+const calculateChildVector = (vec1, vec2) => {
+    let copy = [...vec2];
+    for (let i = 0; i < vec1.length; ++i) {
+        copy[i] += vec1[i];
+        copy[i] /= 2;
+    }
+    return copy;
+}
+
+export const breedHelper = async (apiData, model) => {
+    console.log(apiData);
+    let seenSet = new Set();
+    let dataSet = [];
+    let results = [];
+    for (let pegaOuter of apiData) {
+        for (let pegaInner of apiData) {
+            //console.log(pegaOuter, pegaInner);
+            if (pegaOuter.id === pegaInner.id) continue;
+            if (pegaOuter.gender === pegaInner.gender) continue;
+            if (seenSet.has((pegaInner.id, pegaOuter.id))) continue;
+            // maintain bloodlines check
+            if (pegaOuter.breedType !== pegaInner.breedType) continue;
+            const mVec = getStatsFromJson(pegaOuter);
+            const fVec = getStatsFromJson(pegaInner);
+            const cVec = calculateChildVector(mVec, fVec);
+            dataSet.push(cVec);
+            results.push({lId: pegaOuter.id, rId: pegaInner.id, cVec: cVec});
+            seenSet.add((pegaOuter.id, pegaInner.id));
+        }
+    }
+    dataSet = tf.tensor(dataSet);
+    const predictions = await predictDataSet(dataSet, model)
+    const metaScores = predictions.map(pred => getMetaScore(pred));
+    const mergedData = results.map((obj, idx) => ({
+        ...obj,
+        metaScore: metaScores[idx],
+    }))
+    return mergedData.sort((a,b) => (a.metaScore > b.metaScore) ? -1 : 1);
+}
+

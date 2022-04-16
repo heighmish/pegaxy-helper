@@ -5,6 +5,7 @@ import { apiCall } from "../util/api";
 import { getModelPrediction } from "../util/model";
 import { createPegaCard } from "../util/createPegaCard";
 import CenteredContainer from "../components/CenteredContainer";
+import { getStatsFromJson } from "../util/helpers";
 
 
 const SingleLookup = ({ model }) => {
@@ -31,14 +32,7 @@ const SingleLookup = ({ model }) => {
   }
 
   const realPrediction = async (pega) => {
-    const numbers = [
-      pega.speed,
-      pega.strength,
-      pega.lightning,
-      pega.wind,
-      pega.water,
-      pega.fire
-    ]
+    const numbers = getStatsFromJson(pega);
     const prediction = await getModelPrediction(numbers, model);
     const accountData = await apiCall(`pegas/owner/user/${pega.ownerAddress}`)
     const allPegaData = accountData.find(pega => pega.id === Number(searchValue));

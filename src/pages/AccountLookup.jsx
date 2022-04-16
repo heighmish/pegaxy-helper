@@ -4,7 +4,7 @@ import SearchBar from "../components/SearchBar";
 import { apiCall } from "../util/api";
 import { createDataSetFromJson } from "../util/model";
 import PegaTable from "../components/PegaTable";
-import { calculateAvgVis, modulateAvgVis, getMetaScore } from "../util/helpers";
+import { calculateAvgVis, getMetaScore } from "../util/helpers";
 
 
 const AccountLookup = ({ model }) => {
@@ -26,14 +26,13 @@ const AccountLookup = ({ model }) => {
   }
   return (
     <Container maxWidth="max">
-    <SearchBar
-      searchLabel={"Wallet address"}
-      text={"Enter a polygon wallet address"}
-      submitHandler={handleSubmit}
-      changeHandler={setSearchValue}
-    />
-    <PegaTable rows={accountPegas}/>
-
+      <SearchBar
+        searchLabel={"Wallet address"}
+        text={"Enter a polygon wallet address"}
+        submitHandler={handleSubmit}
+        changeHandler={setSearchValue}
+      />
+      {accountPegas.length !== 0 && <PegaTable rows={accountPegas}/>}
   </Container>
   );
 }
