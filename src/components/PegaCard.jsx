@@ -14,7 +14,7 @@ import AirIcon from '@mui/icons-material/Air';
 import WaterIcon from '@mui/icons-material/Water';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { orange, green, blue, yellow, red } from '@mui/material/colors';
-import { calculateAvgVis, modulateAvgVis } from '../util/helpers';
+import { calculateAvgVis } from '../util/helpers';
 
 const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedAt, canRaceAt, gender, winRate, gold, silver, bronze, totalRaces, motherId, fatherId, predictedVis, speed, strength, lightning, wind, water, fire, metaScore}) => {
     const [avgVis, setAvgVis] = useState(0);
@@ -65,9 +65,6 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
                                 {`Avg Vis: ${avgVis.toFixed(2)}`}
-                            </Typography>
-                            <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                {`Pred Vis: ${Number(modulateAvgVis(predictedVis, breedType)).toFixed(2)}`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
                                 {`MetaScore: ${metaScore}/10`}

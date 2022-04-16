@@ -1,7 +1,26 @@
 export const calculateAvgVis = (gold, silver, bronze, totalRaces, breedType) => {
-    const oldAvgVis = (gold/totalRaces) * 105 + (silver/totalRaces) * 44 + (bronze/totalRaces)* 26;
-    if (!oldAvgVis) return 0;
-    return modulateAvgVis(oldAvgVis, breedType);
+    let vis;
+    switch (breedType) {
+        case 'Pacer':
+            vis = (gold/totalRaces) * 42 + (silver/totalRaces) * 18 + (bronze/totalRaces)* 10;
+            break;
+        case 'Rare':
+            vis =  (gold/totalRaces) * 126 + (silver/totalRaces) * 53 + (bronze/totalRaces)* 31;
+            break;
+        case 'Epic':
+            vis =  (gold/totalRaces) * 342 + (silver/totalRaces) * 142 + (bronze/totalRaces)* 86;
+            break;
+        case 'Legendary':
+            vis = (gold/totalRaces) * 930 + (silver/totalRaces) * 388 + (bronze/totalRaces)* 232;
+            break;
+        case 'Founding':
+            vis = (gold/totalRaces) * 930 + (silver/totalRaces) * 388 + (bronze/totalRaces)* 232;
+            break;
+        default:
+            // bad input
+            return -1;
+    }
+    return vis || 0;
 }
 
 export const modulateAvgVis = (oldAvgVis, breedType) => {

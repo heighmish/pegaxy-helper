@@ -17,7 +17,6 @@ const AccountLookup = ({ model }) => {
       setAccountPegas(accountData.map((pega, idx) => ({
         ...pega,
         avgVis: calculateAvgVis(pega.gold, pega.silver, pega.bronze, pega.totalRaces, pega.breedType),
-        predicted: modulateAvgVis(predictions[idx], pega.breedType),
         metaScore: getMetaScore(predictions[idx]),
       })));
     } catch (err) {

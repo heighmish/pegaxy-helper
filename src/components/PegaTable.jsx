@@ -85,12 +85,6 @@ const headCells = [
     label: 'Avg Vis',
   },
   {
-    id: 'predicted',
-    numeric: true,
-    disablePadding: false,
-    label: 'Predicted',
-  },
-  {
     id: 'metaScore',
     numeric: true,
     disablePadding: false,
@@ -365,7 +359,6 @@ export default function PegaTable({ rows }) {
                       <TableCell align="right">{row.bloodLine}</TableCell>
                       <TableCell align="right">{row.breedCount}</TableCell>
                       <TableCell align="right">{row.avgVis.toFixed(2)}</TableCell>
-                      <TableCell align="right">{row.predicted.toFixed(2)}</TableCell>
                       <TableCell align="right">{row.metaScore}</TableCell>
                       <TableCell align="right">{row.speed}</TableCell>
                       <TableCell align="right">{row.strength}</TableCell>
