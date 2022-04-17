@@ -6,7 +6,7 @@ import CenteredContainer from "./CenteredContainer";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 
-const SearchBar = ({searchLabel, submitHandler, text, changeHandler}) => {
+const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, error, setError }) => {
     return (
         <Box m={2}>
             <Box m={1} sx={{textAlign: "center"}}>
@@ -14,7 +14,17 @@ const SearchBar = ({searchLabel, submitHandler, text, changeHandler}) => {
             </Box>
             <CenteredContainer maxWidth="md">
                 <FormGroup row>
-                    <TextField onChange={(event) => changeHandler(event.target.value)} label={searchLabel} variant="outlined"/>
+                    <TextField
+                     value={value}
+                     onChange={(event) => {
+                        changeHandler(event.target.value);
+                        setError('');
+                    }}
+                     label={searchLabel}
+                     variant="outlined"
+                     error={error !== ''}
+                     helperText={error ? error : ''}
+                    />
                     <Button size={"small"} onClick={submitHandler} variant="outlined">Search</Button>
                 </FormGroup>
             </CenteredContainer>

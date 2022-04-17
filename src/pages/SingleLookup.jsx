@@ -6,48 +6,62 @@ import { getModelPrediction } from "../util/model";
 import { createPegaCard } from "../util/createPegaCard";
 import CenteredContainer from "../components/CenteredContainer";
 import { getStatsFromJson } from "../util/helpers";
-
+import CircularProgress from '@mui/material/CircularProgress';
 
 const SingleLookup = ({ model }) => {
   const [searchValue, setSearchValue] = useState('');
   const [predictedPega, setPredictedPega] = useState(false);
   const [actualPega, setActualPega] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
   const handleSubmit = async () => {
     if (!searchValue) {
-      console.log("Invalid input");
+      setSearchError("Please enter a value");
       return;
     }
+    setLoading(true);
     setPredictedPega(false);
     setActualPega(false);
     if (searchValue.includes(',')) {
       // Array prediction
-      statsPrediction(searchValue.split(','));
+      await statsPrediction(searchValue.split(','));
+      setLoading(false);
       return;
     }
     // Add more error checking
-    const pega = await apiCall(`pegas/${searchValue}`, {}, 'GET');
-    console.log(pega);
-    realPrediction(pega);
+    try {
+      const pega = await apiCall(`pegas/${searchValue}`, {}, 'GET');
+      await realPrediction(pega);
+      setLoading(false);
+    } catch (err) {
+      setSearchError(err.message);
+      setLoading(false);
+    }
   }
 
   const realPrediction = async (pega) => {
-    const numbers = getStatsFromJson(pega);
-    const prediction = await getModelPrediction(numbers, model);
-    const accountData = await apiCall(`pegas/owner/user/${pega.ownerAddress}`)
-    const allPegaData = accountData.find(pega => pega.id === Number(searchValue));
-    setActualPega(createPegaCard(allPegaData, prediction, searchValue));
+    try {
+      const numbers = getStatsFromJson(pega);
+      const prediction = await getModelPrediction(numbers, model);
+      const accountData = await apiCall(`pegas/owner/user/${pega.ownerAddress}`)
+      const allPegaData = accountData.find(pega => pega.id === Number(searchValue));
+      setActualPega(createPegaCard(allPegaData, prediction, searchValue));
+    } catch (err) {
+      setSearchError(err.message);
+      setLoading(false);
+    }
   }
    
   const statsPrediction = async (arr) => {
     if (arr.length !== 6) {
-      console.log(`Invalid length ${arr.length}`);
+      setSearchError(`Invalid length ${arr.length}`);
       return;
     }
     const numbers = arr.map(num => Number(num));
     numbers.forEach(element => {
       if (element < 0 || element > 9) {
-        console.log(`Invalid element value ${element}, must be between 0 and 9`);
+        setSearchError(`Invalid element value ${element}, must be between 0 and 9`);
         return;
       }
     })
@@ -61,9 +75,13 @@ const SingleLookup = ({ model }) => {
           searchLabel={"PegaID"}
           text={"Enter a PegaID or a comma separated pega stats as: speed, strength, lightning, wind, water, fire"}
           submitHandler={handleSubmit}
+          value={searchValue}
           changeHandler={setSearchValue}
+          error={searchError}
+          setError={setSearchError}
         />
         <CenteredContainer>
+          {loading && <CircularProgress />}
           {predictedPega && <div>Expected vis earned for those stats are {predictedPega} </div>}
           {actualPega}
         </CenteredContainer>

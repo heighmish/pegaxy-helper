@@ -53,11 +53,11 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/heighmish/frontend.git"
+    "url": "git+https://github.com/heighmish/pegaxy-helper.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/heighmish/frontend/issues"
+    "url": "https://github.com/heighmish/pegaxy-helper/issues"
   }
 }

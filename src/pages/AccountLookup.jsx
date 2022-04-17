@@ -1,18 +1,24 @@
 import React, { useState } from "react";
-import { Container } from "@mui/material";
+import { CircularProgress, Container } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import { apiCall } from "../util/api";
 import { createDataSetFromJson } from "../util/model";
 import PegaTable from "../components/PegaTable";
-import { calculateAvgVis, getMetaScore } from "../util/helpers";
+import { calculateAvgVis, getMetaScore, loadAddress, saveAddress } from "../util/helpers";
+import CenteredContainer from "../components/CenteredContainer";
 
 
 const AccountLookup = ({ model }) => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState(loadAddress());
   const [accountPegas, setAccountPegas] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState('');
+
   const handleSubmit = async () => {
     try {
-      const accountData = await apiCall(`pegas/owner/user/${searchValue}`)
+      setLoading(true);
+      const accountData = await apiCall(`pegas/owner/user/${searchValue}`);
+      saveAddress(searchValue);
       const predictions = await createDataSetFromJson(accountData, model);
       setAccountPegas(accountData.map((pega, idx) => ({
         ...pega,
@@ -20,18 +26,27 @@ const AccountLookup = ({ model }) => {
         metaScore: getMetaScore(predictions[idx]),
       })));
     } catch (err) {
-      console.log(err);
+      setSearchError(err.message)
     }
-
+    setLoading(false);
   }
+
   return (
     <Container maxWidth="max">
       <SearchBar
         searchLabel={"Wallet address"}
         text={"Enter a polygon wallet address"}
         submitHandler={handleSubmit}
+        value={searchValue}
         changeHandler={setSearchValue}
+        error={searchError}
+        setError={setSearchError}
       />
+      {loading &&
+      <CenteredContainer>
+        <CircularProgress />
+      </CenteredContainer>
+      }
       {accountPegas.length !== 0 && <PegaTable rows={accountPegas}/>}
   </Container>
   );

@@ -82,18 +82,16 @@ const calculateChildVector = (vec1, vec2) => {
     return copy;
 }
 
-export const breedHelper = async (apiData, model) => {
-    console.log(apiData);
+export const breedHelper = async (apiData, model, validate) => {
     let seenSet = new Set();
     let dataSet = [];
     let results = [];
     for (let pegaOuter of apiData) {
         for (let pegaInner of apiData) {
-            //console.log(pegaOuter, pegaInner);
             if (pegaOuter.id === pegaInner.id) continue;
             if (pegaOuter.gender === pegaInner.gender) continue;
             if (seenSet.has((pegaInner.id, pegaOuter.id))) continue;
-            // maintain bloodlines check
+            if (!validate(pegaOuter, pegaInner)) continue;
             if (pegaOuter.breedType !== pegaInner.breedType) continue;
             const mVec = getStatsFromJson(pegaOuter);
             const fVec = getStatsFromJson(pegaInner);
@@ -113,3 +111,10 @@ export const breedHelper = async (apiData, model) => {
     return mergedData.sort((a,b) => (a.metaScore > b.metaScore) ? -1 : 1);
 }
 
+export const saveAddress = (addr) => {
+    localStorage.setItem('pgxHelper', addr);
+}
+
+export const loadAddress = () => {
+    return localStorage.getItem('pgxHelper') || '';
+}

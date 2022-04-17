@@ -13,8 +13,8 @@ export const apiCall = (path, data, method) => {
         if (res.status === 200) return res.json().then(resolve);
         else if (res.status === 400) {
           return res.json().then(err => {
-            console.log('Error fetching', err.err);
-            reject(err.err);
+            console.log('Error fetching', err);
+            reject(err);
           })
         }
       })
