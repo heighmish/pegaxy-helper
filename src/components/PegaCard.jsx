@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { calculateAvgVis } from '../util/helpers';
 import StatBar from './StatBar';
 
-const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedAt, canRaceAt, gender, winRate, gold, silver, bronze, totalRaces, motherId, fatherId, predictedVis, speed, strength, lightning, wind, water, fire, metaScore}) => {
+const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedAt, canRaceAt, gender, winRate, gold, silver, bronze, totalRaces, motherId, fatherId, speed, strength, lightning, wind, water, fire, metaScore, nav}) => {
     const [avgVis, setAvgVis] = useState(0);
     useEffect(() => {
         const val = calculateAvgVis(gold, silver, bronze, totalRaces, breedType);
@@ -37,7 +37,7 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                         {`Energy: ${energy}/25`}
                     </Typography>
                 </Box>
-                <Box sx= {{ display: 'flex', justifyContent: 'space-between'}}>
+                <Box sx= {{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
                     <Box sx= {{ display: 'flex', gap: '10px'}}>
                         <Box sx= {{ display: 'flex', flexDirection: 'column', gap: '2.5px'}}>
                             <Typography sx={{ fontSize: 14 }} color="text.primary">
@@ -68,8 +68,8 @@ const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedA
                 </Box>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button size="small">Mother {motherId}</Button>
-                <Button size="small">Father {fatherId}</Button>
+                <Button size="small" onClick={() => nav(motherId)}>Mother {motherId}</Button>
+                <Button size="small" onClick={() => nav(fatherId)}>Father {fatherId}</Button>
             </CardActions>
         </Card>
     );

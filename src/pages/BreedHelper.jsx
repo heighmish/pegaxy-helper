@@ -11,11 +11,14 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import Paper from '@mui/material/Paper';
 import CheckIcon from '@mui/icons-material/Check';
+import MiniPegaCard from "../components/MiniPegaCard";
+import CenteredContainer from "../components/CenteredContainer";
 
 const BreedHelper = ({ model }) => {
   const [searchValue, setSearchValue] = useState(loadAddress());
   const [accountPegas, setAccountPegas] = useState([]);
   const [combinations, setCombinations] = useState([]);
+  const [filteredCombinations, setFilteredCombinations] = useState([]);
   const [currIndex, setCurrIndex] = useState(0);
   const [leftPega, setLeftPega] = useState(null);
   const [rightPega, setRightPega] = useState(null);
@@ -35,6 +38,7 @@ const BreedHelper = ({ model }) => {
     if (idx >= combinations.length - 1) setCombinations([]);
     return currIndex - mod;
   }
+
   useEffect(() => {
     const getNewCombination = () => {
       if (combinations.length === 0) return;
@@ -119,57 +123,28 @@ const BreedHelper = ({ model }) => {
         error={searchError}
         setError={setSearchError}
       />
-      {loading && <CircularProgress />}
+      <CenteredContainer>
+        {loading && <CircularProgress />}
+      </CenteredContainer>
       {combinations.length !== 0 && !loading &&
         <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginInline: 'auto' }}>
           <Paper>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2 }}>
-            <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: '10px', justifyContent: 'flex-start', marginLeft: '10px', borderBottom: '1px solid rgba(0, 0, 0, 0.3)' }}>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                #{leftPega.id}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {leftPega.name}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {leftPega.breedCount} | {leftPega.gender} | {leftPega.breedType}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {leftPega.bloodLine}
-              </Typography>
-              <StatBar
-                speed={leftPega.speed}
-                strength={leftPega.strength}
-                fire={leftPega.fire}
-                lightning={leftPega.lightning}
-                water={leftPega.water}
-                wind={leftPega.wind}
-              />
-
-            </Box>
-            <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: '10px', justifyContent: 'flex-end', textAlign: 'right', marginRight: '10px',  borderBottom: '1px solid rgba(0, 0, 0, 0.3)' }}>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                #{rightPega.id}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {rightPega.name}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-              {rightPega.breedType} | {rightPega.gender} | {rightPega.breedCount}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {rightPega.bloodLine}
-              </Typography>
-              <StatBar 
-                pos={'flex-end'}
-                speed={rightPega.speed}
-                strength={rightPega.strength}
-                fire={rightPega.fire}
-                lightning={rightPega.lightning}
-                water={rightPega.water}
-                wind={rightPega.wind}
-              />
-            </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px' }}>
+            <MiniPegaCard
+              pega={leftPega}
+              pos={{
+                marginLeft: '10px',
+              }}
+            />
+            <MiniPegaCard
+              pega={rightPega}
+              pos={{
+                textAlign: {xs: 'left', sm: 'right'},
+                justifyContent: {xs: 'flex-start', sm: 'flex-end'},
+                marginRight: {xs: '0', sm: '10px'},
+                marginLeft: {xs: '10px', sm: '0'},
+              }}
+            />
           </Box>
           <Box sx={{ display: 'flex', flex : 1, justifyContent: 'center', marginBlock: '5px', gap: '15px', marginInline: 'auto' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
