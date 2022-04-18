@@ -5,11 +5,13 @@ import { apiCall } from "../util/api";
 import { getModelPrediction } from "../util/model";
 import { createPegaCard } from "../util/createPegaCard";
 import CenteredContainer from "../components/CenteredContainer";
-import { getStatsFromJson } from "../util/helpers";
+import { getStatsFromJson, getMetaScore } from "../util/helpers";
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSearchParams } from "react-router-dom";
 
 const SingleLookup = ({ model }) => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchValue, setSearchValue] = useState(searchParams.get('pega') || '');
   const [predictedPega, setPredictedPega] = useState(false);
   const [actualPega, setActualPega] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,13 +42,22 @@ const SingleLookup = ({ model }) => {
     }
   }
 
+  const setPegaSearchParam = async (id) => {
+    setSearchParams({ 'pega': id })
+    setSearchValue(id);
+    // setLoading(true);
+    // const pega = await apiCall(`pegas/${id}`, {}, 'GET');
+    // await realPrediction(pega);
+    // setLoading(false);
+  }
+
   const realPrediction = async (pega) => {
     try {
       const numbers = getStatsFromJson(pega);
       const prediction = await getModelPrediction(numbers, model);
       const accountData = await apiCall(`pegas/owner/user/${pega.ownerAddress}`)
       const allPegaData = accountData.find(pega => pega.id === Number(searchValue));
-      setActualPega(createPegaCard(allPegaData, prediction, searchValue));
+      setActualPega(createPegaCard(allPegaData, prediction, setPegaSearchParam, searchValue));
     } catch (err) {
       setSearchError(err.message);
       setLoading(false);
@@ -66,9 +77,9 @@ const SingleLookup = ({ model }) => {
       }
     })
     const prediction = await getModelPrediction(numbers, model);
-    setPredictedPega(prediction);
+    setPredictedPega(getMetaScore(prediction));
   }
-  
+
   return (
       <Container maxWidth="md" sx = {{ display:'flex', flexDirection: 'column', gap: '10px' }}>
         <SearchBar
@@ -82,10 +93,9 @@ const SingleLookup = ({ model }) => {
         />
         <CenteredContainer>
           {loading && <CircularProgress />}
-          {predictedPega && <div>Expected vis earned for those stats are {predictedPega} </div>}
+          {predictedPega && <div>Expected metascore for those stats are {predictedPega} </div>}
           {actualPega}
         </CenteredContainer>
-
       </Container>
   );
 }

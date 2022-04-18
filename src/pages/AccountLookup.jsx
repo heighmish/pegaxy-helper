@@ -32,7 +32,7 @@ const AccountLookup = ({ model }) => {
   }
 
   return (
-    <Container maxWidth="max">
+    <Container maxWidth="max" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <SearchBar
         searchLabel={"Wallet address"}
         text={"Enter a polygon wallet address"}
