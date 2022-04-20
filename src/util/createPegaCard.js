@@ -1,7 +1,7 @@
 import PegaCard from "../components/PegaCard"
 import { getMetaScore } from "./helpers"
 
-export const createPegaCard = (pega, predicted, nav, pid=undefined) => {
+export const createPegaCard = (pega, predicted, pid=undefined) => {
     return <PegaCard 
         key={pid ? pid : pega.id}
         id={pid ? pid : pega.id}
@@ -28,6 +28,5 @@ export const createPegaCard = (pega, predicted, nav, pid=undefined) => {
         fire = {pega.fire}
         predictedVis = {predicted}
         metaScore = {getMetaScore(predicted)}
-        nav={nav}
         />
 }

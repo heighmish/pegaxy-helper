@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CircularProgress, Container } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import { apiCall } from "../util/api";
-import { breedHelper, saveAddress, loadAddress } from "../util/helpers";
+import { breedHelper, saveAddress, loadAddress, getBreedType, getBloodLine, getBreedHelperSettings } from "../util/helpers";
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import StatBar from "../components/StatBar";
@@ -13,6 +13,7 @@ import Paper from '@mui/material/Paper';
 import CheckIcon from '@mui/icons-material/Check';
 import MiniPegaCard from "../components/MiniPegaCard";
 import CenteredContainer from "../components/CenteredContainer";
+import SettingsPanel from "../components/SettingsPanel";
 
 const BreedHelper = ({ model }) => {
   const [searchValue, setSearchValue] = useState(loadAddress());
@@ -25,62 +26,38 @@ const BreedHelper = ({ model }) => {
   const [searchError, setSearchError] = useState('');
   const [loading, setLoading] = useState(false);
   const [seenPegas, setSeenPegas] = useState(new Set());
-  const [advancedIndex, setAdvancedIndex] = useState(true);
 
-  const getNextValidIndex = () => {
-    const mod = advancedIndex ? 1 : -1;
-    let idx = currIndex;
-    while (0 < idx && idx < combinations.length - 1) {
-      idx += mod;
-      const obj = combinations[idx];
-      if (!seenPegas.has(obj.lId) && !seenPegas.has(obj.rId)) return idx;
-    }
-    if (idx >= combinations.length - 1) setCombinations([]);
-    return currIndex - mod;
-  }
+  const [settings, setSettings] = useState(getBreedHelperSettings());
 
   useEffect(() => {
-    const getNewCombination = () => {
-      if (combinations.length === 0) return;
-      if (currIndex < 0 || currIndex > combinations.length - 1) return;
-      const obj = combinations[currIndex];
-      if (seenPegas.has(obj.lId) || seenPegas.has(obj.rId)) {
-        const nextValidIndex = getNextValidIndex();
-        setCurrIndex(nextValidIndex);
-        return;
-      }
+    const filterCombinations = () => {
+      const combCopy = combinations.filter(obj => !seenPegas.has(obj.lId) && !seenPegas.has(obj.rId))
+      console.log('Filtered length', combCopy.length);
+      setFilteredCombinations(combCopy);
+    }
+    filterCombinations();
+  }, [seenPegas, combinations])
+
+  useEffect(() => {
+    const getCurrentCombination = () => {
+      if (!filteredCombinations.length) return;
+      const obj = filteredCombinations[currIndex];
+      console.log(obj)
       setLeftPega(accountPegas.find(pega => pega.id === obj.lId));
       setRightPega(accountPegas.find(pega => pega.id === obj.rId));
     }
-    getNewCombination();
-  }, [currIndex, combinations, accountPegas])
-
-  const validateBreedCount = (pega) => {
-    if (pega.breedCount === 7) return false;
-    if (pega.breedType === 'Pacer') {
-      if (pega.breedCount > 2) return false;
-    }
-    if (pega.breedType === 'Rare') {
-      if (pega.breedCount > 2) return false;
-    }
-    if (pega.breedType === 'Epic') {
-      if (pega.breedCount > 4) return false;
-    }
-    return true;
-  }
-
-  const validate = (pega1, pega2) => {
-    if (!validateBreedCount(pega1) || !validateBreedCount(pega2)) return false;
-    return true;
-  }
+    getCurrentCombination();
+  }, [currIndex, accountPegas, filteredCombinations])
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const accountData = await apiCall(`pegas/owner/user/${searchValue}`);
-      saveAddress(searchValue);
+      saveAddress(searchValue); // Save address in localstorage
       setAccountPegas(accountData);
-      const results = await breedHelper(accountData, model, validate);
+      setSeenPegas(new Set()); // Reset seen set values
+      setCurrIndex(0);
+      const results = await breedHelper(accountData, model);
       setCombinations(results);
     } catch (err) {
       setSearchError(err.message);
@@ -90,28 +67,11 @@ const BreedHelper = ({ model }) => {
 
   const addPegasToseenSet = () => {
     const setCopy = new Set(seenPegas);
-    setCopy.add(combinations[currIndex].lId);
-    setCopy.add(combinations[currIndex].rId);
+    setCopy.add(filteredCombinations[currIndex].lId);
+    setCopy.add(filteredCombinations[currIndex].rId);
     setSeenPegas(setCopy);
-    setCurrIndex(prev => prev + 1);
   }
 
-  const getBloodLine = (lPar, rPar) => {
-    if (lPar === 'Zan' || rPar === 'Zan') return 'Zan';
-    if (lPar === 'Klin' || rPar === 'Klin') return 'Klin';
-    if (lPar === 'Campona' || rPar === 'Campona') return 'Campona';
-    if (lPar === 'Hoz' || rPar === 'Hoz') return 'Hoz';
-    return 'Error';
-  }
-
-  const getBreedType = (lPar, rPar) => {
-    if (lPar === 'Pacer' || rPar === 'Pacer') return 'Pacer';
-    if (lPar === 'Rare' || rPar === 'Rare') return 'Pacer';
-    if (lPar === 'Epic' || rPar === 'Epic') return 'Rare';
-    if (lPar === 'Legendary' || rPar === 'Legendary') return 'Epic';
-    if (lPar === 'Founding' || rPar === 'Founding') return 'Legendary';
-    return 'Error';
-  }
   return (
     <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <SearchBar
@@ -126,16 +86,17 @@ const BreedHelper = ({ model }) => {
       <CenteredContainer>
         {loading && <CircularProgress />}
       </CenteredContainer>
-      {combinations.length !== 0 && !loading &&
-        <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginInline: 'auto' }}>
+      {leftPega && rightPega && !loading &&
+      <Box sx={{display: 'flex', flexWrap: 'wrap' }}>
+        <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginRight: 0}}>
           <Paper>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px', alignItems: 'flex-start'  }}>
             <MiniPegaCard
               pega={leftPega}
               pos={{
                 marginLeft: '10px',
               }}
-            />
+              />
             <MiniPegaCard
               pega={rightPega}
               pos={{
@@ -144,7 +105,7 @@ const BreedHelper = ({ model }) => {
                 marginRight: {xs: '0', sm: '10px'},
                 marginLeft: {xs: '10px', sm: '0'},
               }}
-            />
+              />
           </Box>
           <Box sx={{ display: 'flex', flex : 1, justifyContent: 'center', marginBlock: '5px', gap: '15px', marginInline: 'auto' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -177,7 +138,6 @@ const BreedHelper = ({ model }) => {
             <IconButton
               disabled={currIndex === 0}
               onClick={() => {
-                setAdvancedIndex(false);
                 setCurrIndex(prev => prev - 1);
               }}
               aria-label="previous-pega-combination"
@@ -190,7 +150,6 @@ const BreedHelper = ({ model }) => {
             <IconButton
               disabled={currIndex === combinations.length}
               onClick={() => {
-                setAdvancedIndex(true);
                 setCurrIndex(prev => prev + 1)
               }}
               aria-label="next-pega-combination"
@@ -198,7 +157,9 @@ const BreedHelper = ({ model }) => {
               <NavigateNextIcon />
             </IconButton>
           </Container>
-      </Container>}
+      </Container>
+      <SettingsPanel settings={settings} setSettings={setSettings} />
+    </Box>}
   </Container>
   );
 }
