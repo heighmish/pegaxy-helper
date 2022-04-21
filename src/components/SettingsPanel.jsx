@@ -13,6 +13,9 @@ import Checkbox from '@mui/material/Checkbox';
 import Slider from '@mui/material/Slider';
 import { Typography } from '@mui/material';
 import { setBreedHelperSettings } from '../util/helpers';
+import Tooltip from '@mui/material/Tooltip';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { BREEDTYPES, BREEDTYPESCOLOURS } from '../config';
 
 const SettingsPanel = ({ settings, setSettings }) => {
   const [currentlyAble, setCurrentlyAble] = useState(settings.currBreedable);
@@ -41,6 +44,7 @@ const SettingsPanel = ({ settings, setSettings }) => {
   }
 
   const updateBreedTypeSlider = (ev, val, idx) => {
+    if (val[0] === breedTypes[idx].breedCount[0] && val[1] === breedTypes[idx].breedCount[1]) return;
     const copy = [...breedTypes];
     copy[idx].breedCount = val;
     setBreedTypes(copy);
@@ -55,16 +59,16 @@ const SettingsPanel = ({ settings, setSettings }) => {
     setOpenBreedCount(!openBreedCount);
   };
   return (
-    <Paper>
-      <List
-        sx={{ width: 'auto', height: 'auto' }}
-        component="section"
-        subheader={
-          <ListSubheader component="div">
+    <List
+    component="section"
+    subheader={
+      <ListSubheader component="div">
             Breed helper filter options
           </ListSubheader>
         }
-      >
+        >
+        <Paper>
+
         <ListItemButton role={undefined} onClick={()=> setCurrentlyAble(!currentlyAble)} dense>
           <ListItemText primary="Currently able to breed?"/>
           <ListItemIcon>
@@ -80,7 +84,7 @@ const SettingsPanel = ({ settings, setSettings }) => {
 
         <ListItemButton role={undefined} onClick={()=> setMaintainBloodlines(!maintainBloodlines)} dense>
           <ListItemText primary="Maintain bloodlines?"/>
-          <ListItemIcon>
+          <ListItemIcon sx={{minWidth: '42px' }} >
             <Checkbox
               edge="end"
               checked={maintainBloodlines}
@@ -89,6 +93,9 @@ const SettingsPanel = ({ settings, setSettings }) => {
               inputProps={{ 'aria-labelledby': 'TEMP'}}
             />
           </ListItemIcon>
+          <Tooltip title="Only breed hoz with hoz, klin with klin, etc" placement="top">
+            <HelpOutlineIcon />
+          </Tooltip>
         </ListItemButton>
      
       <ListItemButton onClick={handleBreedTypeOpen}>
@@ -97,7 +104,7 @@ const SettingsPanel = ({ settings, setSettings }) => {
       </ListItemButton>
       <Collapse in={openBreedType} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {['Pacer', 'Rare', 'Epic', 'Legendary', 'Founding'].map((breedType, idx) =>
+          {BREEDTYPES.map((breedType, idx) =>
             <ListItemButton role={undefined} onClick={()=> updateBreedTypeClick(idx)} dense sx={{ pl: 4 }} key={`bType${idx}`}>
             <ListItemText primary={breedType}/>
             <ListItemIcon>
@@ -107,6 +114,7 @@ const SettingsPanel = ({ settings, setSettings }) => {
                 tabIndex={-1}
                 disableRipple
                 inputProps={{ 'aria-labelledby': 'TEMP'}}
+                color={BREEDTYPESCOLOURS[idx]}
               />
             </ListItemIcon>
           </ListItemButton>
@@ -120,7 +128,7 @@ const SettingsPanel = ({ settings, setSettings }) => {
       </ListItemButton>
       <Collapse in={openBreedCount} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {['Pacer', 'Rare', 'Epic', 'Legendary', 'Founding'].map((breedType, idx) =>
+          {BREEDTYPES.map((breedType, idx) =>
             <ListItem sx={{display: 'flex', flexDirection: 'column'}}  key={`bCount${idx}`}>
               <Typography id={`${breedType}-breedcount-input-slider`}>
                 {breedType}
@@ -129,17 +137,20 @@ const SettingsPanel = ({ settings, setSettings }) => {
                     aria-labelledby={`${breedType}-breedcount-input-slider`}
                     value={breedTypes[idx].breedCount}
                     onChange={(ev, val) => updateBreedTypeSlider(ev, val, idx)}
+                    valueLabelDisplay="auto"
                     step={1}
                     min={0}
                     max={7}
+                    marks
+                    color={BREEDTYPESCOLOURS[idx]}
                   />
             </ListItem>
           )}
         </List>
       </Collapse>
 
-    </List>
   </Paper>
+    </List>
   )
 }
 

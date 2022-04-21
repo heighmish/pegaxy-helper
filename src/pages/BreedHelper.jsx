@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CircularProgress, Container } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import { apiCall } from "../util/api";
-import { breedHelper, saveAddress, loadAddress, getBreedType, getBloodLine, getBreedHelperSettings } from "../util/helpers";
+import { breedHelper, saveAddress, loadAddress, getBreedType, getBloodLine, getBreedHelperSettings, getVisCost } from "../util/helpers";
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import StatBar from "../components/StatBar";
@@ -14,6 +14,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import MiniPegaCard from "../components/MiniPegaCard";
 import CenteredContainer from "../components/CenteredContainer";
 import SettingsPanel from "../components/SettingsPanel";
+import { bloodLineTimers} from "../config";
+import Tooltip from '@mui/material/Tooltip';
 
 const BreedHelper = ({ model }) => {
   const [searchValue, setSearchValue] = useState(loadAddress());
@@ -26,35 +28,100 @@ const BreedHelper = ({ model }) => {
   const [searchError, setSearchError] = useState('');
   const [loading, setLoading] = useState(false);
   const [seenPegas, setSeenPegas] = useState(new Set());
-
   const [settings, setSettings] = useState(getBreedHelperSettings());
 
   useEffect(() => {
+    const validateBreedCount = (val, arr) => {
+      return (arr[0] <= val && val <= arr[1]);
+    }
+
+    const validateBreedTime = (pega, currTime) => {
+      if (pega.lastBreedTime === 0) return currTime >= pega.canBreedAt;
+      return currTime >= (pega.lastBreedTime + (bloodLineTimers[pega.bloodLine].breedCD * 60 * 60));
+    }
+
+    const validatePega = (pega, time) => {
+      let idx;
+      const actBreedType = pega.breedType;
+      switch (actBreedType) {
+        case 'Pacer':
+          idx = 0;
+          if (!settings.breedTypes[idx].showInResults) return false;
+          if (!validateBreedCount(pega.breedCount, settings.breedTypes[idx].breedCount)) return false;
+          if (settings.currBreedable && !validateBreedTime(pega, time)) return false;
+          break;
+        case 'Rare':
+          idx = 1;
+          if (!settings.breedTypes[idx].showInResults) return false;
+          if (!validateBreedCount(pega.breedCount, settings.breedTypes[idx].breedCount)) return false;
+          if (settings.currBreedable && !validateBreedTime(pega, time)) return false;
+          break;
+        case 'Epic':
+          idx = 2;
+          if (!settings.breedTypes[idx].showInResults) return false;
+          if (!validateBreedCount(pega.breedCount, settings.breedTypes[idx].breedCount)) return false;
+          if (settings.currBreedable && !validateBreedTime(pega, time)) return false;
+          break;
+        case 'Legendary':
+          idx = 3;
+          if (!settings.breedTypes[idx].showInResults) return false;
+          if (!validateBreedCount(pega.breedCount, settings.breedTypes[idx].breedCount)) return false;
+          if (settings.currBreedable && !validateBreedTime(pega, time)) return false;
+          break;
+        case 'Founding':
+          idx = 4;
+          if (!settings.breedTypes[idx].showInResults) return false;
+          if (!validateBreedCount(pega.breedCount, settings.breedTypes[idx].breedCount)) return false;
+          if (settings.currBreedable && !validateBreedTime(pega, time)) return false;
+          break;
+        default:
+          console.log('Breedtype is not defined',  actBreedType);
+      }
+      return !seenPegas.has(pega.id);
+    }
+
+    const validateObject = (obj, time) => {
+      const lPega = accountPegas[obj.lId];
+      const rPega = accountPegas[obj.rId];
+      if (settings.maintainBloodlines && lPega.bloodLine !== rPega.bloodLine) return false;
+      return validatePega(lPega, time) && validatePega(rPega, time);
+    }
+
     const filterCombinations = () => {
-      const combCopy = combinations.filter(obj => !seenPegas.has(obj.lId) && !seenPegas.has(obj.rId))
-      console.log('Filtered length', combCopy.length);
+      const time = Date.now() / 1000;
+      const combCopy = combinations.filter(obj => validateObject(obj, time))
       setFilteredCombinations(combCopy);
+      setCurrIndex(0);
     }
     filterCombinations();
-  }, [seenPegas, combinations])
+  }, [seenPegas, combinations, settings, accountPegas])
 
   useEffect(() => {
     const getCurrentCombination = () => {
-      if (!filteredCombinations.length) return;
+      if (!filteredCombinations.length || currIndex >= filteredCombinations.length) return;
       const obj = filteredCombinations[currIndex];
-      console.log(obj)
-      setLeftPega(accountPegas.find(pega => pega.id === obj.lId));
-      setRightPega(accountPegas.find(pega => pega.id === obj.rId));
+      setLeftPega(accountPegas[obj.lId]);
+      setRightPega(accountPegas[obj.rId]);
     }
     getCurrentCombination();
   }, [currIndex, accountPegas, filteredCombinations])
+
+  const convertArrayToObject = (array, key) => {
+    const newObject = {};
+    return array.reduce((obj, item) => {
+      return {
+        ...obj,
+        [item[key]]: item,
+      };
+    }, newObject)
+  }
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const accountData = await apiCall(`pegas/owner/user/${searchValue}`);
       saveAddress(searchValue); // Save address in localstorage
-      setAccountPegas(accountData);
+      setAccountPegas(convertArrayToObject(accountData, 'id'));
       setSeenPegas(new Set()); // Reset seen set values
       setCurrIndex(0);
       const results = await breedHelper(accountData, model);
@@ -86,11 +153,11 @@ const BreedHelper = ({ model }) => {
       <CenteredContainer>
         {loading && <CircularProgress />}
       </CenteredContainer>
-      {leftPega && rightPega && !loading &&
-      <Box sx={{display: 'flex', flexWrap: 'wrap' }}>
-        <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginRight: 0}}>
+      {!loading &&
+      <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start'}}>
+        {leftPega && rightPega && filteredCombinations.length > currIndex && <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginRight: 0, padding: {xs: 0, sm: '16px'} }}>
           <Paper>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px', alignItems: 'flex-start'  }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px' }}>
             <MiniPegaCard
               pega={leftPega}
               pos={{
@@ -107,36 +174,36 @@ const BreedHelper = ({ model }) => {
               }}
               />
           </Box>
-          <Box sx={{ display: 'flex', flex : 1, justifyContent: 'center', marginBlock: '5px', gap: '15px', marginInline: 'auto' }}>
+          <Box sx={{ display: 'flex', flex : 1, justifyContent: {xs: 'flex-start', sm: 'center'}, marginBlock: '5px', gap: '15px', marginLeft: {xs: '10px', sm: 0},  flexWrap: 'wrap' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography sx={{ fontSize: 16 }} color="text.primary">
                 Expected Child Stats
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {getBloodLine(leftPega.bloodLine, rightPega.bloodLine)}
+                {getBloodLine(leftPega.bloodLine, rightPega.bloodLine)} | {getBreedType(leftPega.breedType, rightPega.breedType)}
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {getBreedType(leftPega.breedType, rightPega.breedType)}
+                Vis cost: {getVisCost(leftPega.breedCount, rightPega.breedCount)}
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.primary">
-                Metascore: {combinations[currIndex].metaScore}/10
+                Metascore: {filteredCombinations[currIndex].metaScore}/10
               </Typography>
             </Box>
             <Box sx={{ display: 'flex' }}>
               <StatBar
-                speed={combinations[currIndex].cVec[0].toFixed(2)}
-                strength={combinations[currIndex].cVec[1].toFixed(2)}
-                fire={combinations[currIndex].cVec[5].toFixed(2)}
-                lightning={combinations[currIndex].cVec[2].toFixed(2)}
-                water={combinations[currIndex].cVec[4].toFixed(2)}
-                wind={combinations[currIndex].cVec[3].toFixed(2)}
+                speed={filteredCombinations[currIndex].cVec[0].toFixed(2)}
+                strength={filteredCombinations[currIndex].cVec[1].toFixed(2)}
+                fire={filteredCombinations[currIndex].cVec[5].toFixed(2)}
+                lightning={filteredCombinations[currIndex].cVec[2].toFixed(2)}
+                water={filteredCombinations[currIndex].cVec[4].toFixed(2)}
+                wind={filteredCombinations[currIndex].cVec[3].toFixed(2)}
               />
             </Box>
           </Box>
         </Paper>
           <Container maxWidth='md' sx={{ display: 'flex', justifyContent: 'center' }}>
             <IconButton
-              disabled={currIndex === 0}
+              disabled={currIndex === 0 || filteredCombinations.length <= 1}
               onClick={() => {
                 setCurrIndex(prev => prev - 1);
               }}
@@ -144,11 +211,19 @@ const BreedHelper = ({ model }) => {
             >
               <NavigateBeforeIcon />
             </IconButton>
-            <IconButton onClick={addPegasToseenSet}>
-              <CheckIcon />
-            </IconButton>
+
+            <Tooltip title="Don't show combinations using these pegas">
+              <span>
+                <IconButton
+                onClick={addPegasToseenSet}
+                disabled={filteredCombinations.length <= 1}
+                >
+                  <CheckIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
             <IconButton
-              disabled={currIndex === combinations.length}
+              disabled={currIndex === filteredCombinations.length-1 || filteredCombinations.length <= 1}
               onClick={() => {
                 setCurrIndex(prev => prev + 1)
               }}
@@ -157,7 +232,11 @@ const BreedHelper = ({ model }) => {
               <NavigateNextIcon />
             </IconButton>
           </Container>
-      </Container>
+      </Container>}
+          {filteredCombinations.length <= 1  &&
+            <Typography sx={{ fontSize: 14 }} color="text.primary">
+              There are no more combinations for your current settings
+            </Typography>}
       <SettingsPanel settings={settings} setSettings={setSettings} />
     </Box>}
   </Container>
