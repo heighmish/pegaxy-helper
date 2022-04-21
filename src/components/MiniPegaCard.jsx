@@ -2,10 +2,8 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import StatBar from "../components/StatBar";
-import { useTheme } from '@mui/material';
 
 const MiniPegaCard = ({ pega, pos }) => {
-  const theme = useTheme();
   return (
     <Box sx={[{ display: 'flex', flex: 1, flexDirection: 'column', gap: '10px', borderBottom: '1px solid black', borderColor: 'primary.main'}, pos]}>
       <Typography sx={{ fontSize: 14 }} color="text.primary">

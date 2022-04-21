@@ -153,7 +153,7 @@ const BreedHelper = ({ model }) => {
       <CenteredContainer>
         {loading && <CircularProgress />}
       </CenteredContainer>
-      {!loading &&
+      {!loading && accountPegas.length !== 0 &&
       <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start'}}>
         {leftPega && rightPega && filteredCombinations.length > currIndex && <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginRight: 0, padding: {xs: 0, sm: '16px'} }}>
           <Paper>
