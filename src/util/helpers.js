@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { predictDataSet } from './model';
+import { VISBREEDCOSTS } from '../config';
 
 export const calculateAvgVis = (gold, silver, bronze, totalRaces, breedType) => {
     let vis;
@@ -82,7 +83,13 @@ const calculateChildVector = (vec1, vec2) => {
     return copy;
 }
 
-export const breedHelper = async (apiData, model, validate) => {
+const validBreedTypes = (p1, p2) => {
+    // Require parents produce same rarity of child
+    if ((p1 === 'Pacer' && p2 === 'Rare') || (p1 === 'Rare' && p2 === 'Pacer')) return true;
+    return p1 === p2;
+}
+
+export const breedHelper = async (apiData, model) => {
     let seenSet = new Set();
     let dataSet = [];
     let results = [];
@@ -91,8 +98,7 @@ export const breedHelper = async (apiData, model, validate) => {
             if (pegaOuter.id === pegaInner.id) continue;
             if (pegaOuter.gender === pegaInner.gender) continue;
             if (seenSet.has((pegaInner.id, pegaOuter.id))) continue;
-            if (!validate(pegaOuter, pegaInner)) continue;
-            if (pegaOuter.breedType !== pegaInner.breedType) continue;
+            if (!validBreedTypes(pegaOuter.breedType, pegaInner.breedType)) continue;
             const mVec = getStatsFromJson(pegaOuter);
             const fVec = getStatsFromJson(pegaInner);
             const cVec = calculateChildVector(mVec, fVec);
@@ -117,4 +123,62 @@ export const saveAddress = (addr) => {
 
 export const loadAddress = () => {
     return localStorage.getItem('pgxHelper') || '';
+}
+
+export const getBreedType = (lPar, rPar) => {
+    if (lPar === 'Pacer' || rPar === 'Pacer') return 'Pacer';
+    if (lPar === 'Rare' || rPar === 'Rare') return 'Pacer';
+    if (lPar === 'Epic' || rPar === 'Epic') return 'Rare';
+    if (lPar === 'Legendary' || rPar === 'Legendary') return 'Epic';
+    if (lPar === 'Founding' || rPar === 'Founding') return 'Legendary';
+    return 'Error';
+}
+
+export const getBloodLine = (lPar, rPar) => {
+    if (lPar === 'Zan' || rPar === 'Zan') return 'Zan';
+    if (lPar === 'Klin' || rPar === 'Klin') return 'Klin';
+    if (lPar === 'Campona' || rPar === 'Campona') return 'Campona';
+    if (lPar === 'Hoz' || rPar === 'Hoz') return 'Hoz';
+    return 'Error';
+}
+
+export const getVisCost = (leftBC, rightBC) => {
+    return VISBREEDCOSTS[leftBC] + VISBREEDCOSTS[rightBC];
+}
+
+export const createEmptyPreferencesObject = () => {
+    return {
+        currBreedable: true,
+        maintainBloodlines: true,
+        breedTypes: [
+            {
+                breedCount: [0,7],
+                showInResults: true,
+            },
+            {
+                breedCount: [0,7],
+                showInResults: true,
+            },
+            {
+                breedCount: [0,7],
+                showInResults: true,
+            },
+            {
+                breedCount: [0,7],
+                showInResults: true,
+            },
+            {
+                breedCount: [0,7],
+                showInResults: true,
+            }
+        ]
+    }
+}
+
+export const setBreedHelperSettings = (obj) => {
+    localStorage.setItem('pgxHelperSettings', JSON.stringify(obj));
+}
+
+export const getBreedHelperSettings = () => {
+    return JSON.parse(localStorage.getItem('pgxHelperSettings')) || createEmptyPreferencesObject();
 }

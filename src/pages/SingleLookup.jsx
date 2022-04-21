@@ -42,22 +42,13 @@ const SingleLookup = ({ model }) => {
     }
   }
 
-  const setPegaSearchParam = async (id) => {
-    setSearchParams({ 'pega': id })
-    setSearchValue(id);
-    // setLoading(true);
-    // const pega = await apiCall(`pegas/${id}`, {}, 'GET');
-    // await realPrediction(pega);
-    // setLoading(false);
-  }
-
   const realPrediction = async (pega) => {
     try {
       const numbers = getStatsFromJson(pega);
       const prediction = await getModelPrediction(numbers, model);
       const accountData = await apiCall(`pegas/owner/user/${pega.ownerAddress}`)
       const allPegaData = accountData.find(pega => pega.id === Number(searchValue));
-      setActualPega(createPegaCard(allPegaData, prediction, setPegaSearchParam, searchValue));
+      setActualPega(createPegaCard(allPegaData, prediction, searchValue));
     } catch (err) {
       setSearchError(err.message);
       setLoading(false);

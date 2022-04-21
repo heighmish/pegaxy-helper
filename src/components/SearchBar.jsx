@@ -5,6 +5,14 @@ import FormGroup from '@mui/material/FormGroup';
 import CenteredContainer from "./CenteredContainer";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+
+const SearchButton = ({ onClick }) => (
+    <IconButton onClick={onClick}>
+      <SearchIcon />
+    </IconButton>
+  );
 
 const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, error, setError }) => {
     return (
@@ -24,8 +32,8 @@ const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, err
                      variant="outlined"
                      error={error !== ''}
                      helperText={error ? error : ''}
+                     InputProps={{ endAdornment: <SearchButton aria-label='search' onClick={submitHandler} /> }}
                     />
-                    <Button size={"small"} onClick={submitHandler} variant="outlined">Search</Button>
                 </FormGroup>
             </CenteredContainer>
         </Box>
