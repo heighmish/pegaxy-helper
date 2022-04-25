@@ -5,7 +5,6 @@ import AccountLookup from './pages/AccountLookup';
 import BreedHelper from './pages/BreedHelper';
 import NavBar from "./components/NavBar";
 import * as tf from '@tensorflow/tfjs';
-import './index.css';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';

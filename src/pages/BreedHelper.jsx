@@ -16,6 +16,7 @@ import CenteredContainer from "../components/CenteredContainer";
 import SettingsPanel from "../components/SettingsPanel";
 import { bloodLineTimers} from "../config";
 import Tooltip from '@mui/material/Tooltip';
+import { Helmet } from 'react-helmet';
 
 const BreedHelper = ({ model }) => {
   const [searchValue, setSearchValue] = useState(loadAddress());
@@ -140,106 +141,114 @@ const BreedHelper = ({ model }) => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <SearchBar
-        searchLabel={"Wallet address"}
-        text={"Enter a polygon wallet address"}
-        submitHandler={handleSubmit}
-        value={searchValue}
-        changeHandler={setSearchValue}
-        error={searchError}
-        setError={setSearchError}
-      />
-      <CenteredContainer>
-        {loading && <CircularProgress />}
-      </CenteredContainer>
-      {!loading && accountPegas.length !== 0 &&
-      <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start'}}>
-        {leftPega && rightPega && filteredCombinations.length > currIndex && <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginRight: 0, padding: {xs: 0, sm: '16px'} }}>
-          <Paper>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px' }}>
-            <MiniPegaCard
-              pega={leftPega}
-              pos={{
-                marginLeft: '10px',
-              }}
-              />
-            <MiniPegaCard
-              pega={rightPega}
-              pos={{
-                textAlign: {xs: 'left', sm: 'right'},
-                justifyContent: {xs: 'flex-start', sm: 'flex-end'},
-                marginRight: {xs: '0', sm: '10px'},
-                marginLeft: {xs: '10px', sm: '0'},
-              }}
-              />
-          </Box>
-          <Box sx={{ display: 'flex', flex : 1, justifyContent: {xs: 'flex-start', sm: 'center'}, marginBlock: '5px', gap: '15px', marginLeft: {xs: '10px', sm: 0},  flexWrap: 'wrap' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography sx={{ fontSize: 16 }} color="text.primary">
-                Expected Child Stats
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                {getBloodLine(leftPega.bloodLine, rightPega.bloodLine)} | {getBreedType(leftPega.breedType, rightPega.breedType)}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                Vis cost: {getVisCost(leftPega.breedCount, rightPega.breedCount)}
-              </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary">
-                Metascore: {filteredCombinations[currIndex].metaScore}/10
-              </Typography>
+    <>
+    <Helmet>
+        <title>Breed Helper</title>
+        <meta name="description" content="Determines good candidate parents for creating new pegas." />
+    </Helmet>
+      <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <SearchBar
+          searchLabel={"Wallet address"}
+          text={"Enter a polygon wallet address:"}
+          submitHandler={handleSubmit}
+          value={searchValue}
+          changeHandler={setSearchValue}
+          error={searchError}
+          setError={setSearchError}
+        />
+        <CenteredContainer>
+          {loading && <CircularProgress />}
+        </CenteredContainer>
+        {!loading && accountPegas.length !== 0 &&
+        <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start'}}>
+          {leftPega && rightPega && filteredCombinations.length > currIndex && <Container maxWidth='sm' sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginRight: 0, padding: {xs: 0, sm: '16px'} }}>
+            <Paper>
+            <Box sx={{ display: 'flex', flexDirection: 'row', flex : 2, flexWrap: 'wrap', gap: '10px' }}>
+              <MiniPegaCard
+                pega={leftPega}
+                pos={{
+                  marginLeft: '10px',
+                }}
+                />
+              <MiniPegaCard
+                pega={rightPega}
+                pos={{
+                  textAlign: {xs: 'left', sm: 'right'},
+                  justifyContent: {xs: 'flex-start', sm: 'flex-end'},
+                  marginRight: {xs: '0', sm: '10px'},
+                  marginLeft: {xs: '10px', sm: '0'},
+                }}
+                />
             </Box>
-            <Box sx={{ display: 'flex' }}>
-              <StatBar
-                speed={filteredCombinations[currIndex].cVec[0].toFixed(2)}
-                strength={filteredCombinations[currIndex].cVec[1].toFixed(2)}
-                fire={filteredCombinations[currIndex].cVec[5].toFixed(2)}
-                lightning={filteredCombinations[currIndex].cVec[2].toFixed(2)}
-                water={filteredCombinations[currIndex].cVec[4].toFixed(2)}
-                wind={filteredCombinations[currIndex].cVec[3].toFixed(2)}
-              />
+            <Box sx={{ display: 'flex', flex : 1, justifyContent: {xs: 'flex-start', sm: 'center'}, marginBlock: '5px', gap: '15px', marginLeft: {xs: '10px', sm: 0},  flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography sx={{ fontSize: 16 }} color="text.primary">
+                  Expected Child Stats
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color="text.primary">
+                  {getBloodLine(leftPega.bloodLine, rightPega.bloodLine)} | {getBreedType(leftPega.breedType, rightPega.breedType)}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color="text.primary">
+                  Vis cost: {getVisCost(leftPega.breedCount, rightPega.breedCount)}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color="text.primary">
+                  Metascore: {filteredCombinations[currIndex].metaScore}/10
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex' }}>
+                <StatBar
+                  speed={filteredCombinations[currIndex].cVec[0].toFixed(2)}
+                  strength={filteredCombinations[currIndex].cVec[1].toFixed(2)}
+                  fire={filteredCombinations[currIndex].cVec[5].toFixed(2)}
+                  lightning={filteredCombinations[currIndex].cVec[2].toFixed(2)}
+                  water={filteredCombinations[currIndex].cVec[4].toFixed(2)}
+                  wind={filteredCombinations[currIndex].cVec[3].toFixed(2)}
+                  />
+              </Box>
             </Box>
-          </Box>
-        </Paper>
-          <Container maxWidth='md' sx={{ display: 'flex', justifyContent: 'center' }}>
-            <IconButton
-              disabled={currIndex === 0 || filteredCombinations.length <= 1}
-              onClick={() => {
-                setCurrIndex(prev => prev - 1);
-              }}
-              aria-label="previous-pega-combination"
-            >
-              <NavigateBeforeIcon />
-            </IconButton>
+          </Paper>
+            <Container maxWidth='md' sx={{ display: 'flex', justifyContent: 'center' }}>
+              <IconButton
+                disabled={currIndex === 0 || filteredCombinations.length <= 1}
+                onClick={() => {
+                  setCurrIndex(prev => prev - 1);
+                }}
+                aria-label="previous-pega-combination"
+              >
+                <NavigateBeforeIcon />
+              </IconButton>
 
-            <Tooltip title="Don't show combinations using these pegas">
-              <span>
-                <IconButton
-                onClick={addPegasToseenSet}
-                disabled={filteredCombinations.length <= 1}
-                >
-                  <CheckIcon />
-                </IconButton>
-              </span>
-            </Tooltip>
-            <IconButton
-              disabled={currIndex === filteredCombinations.length-1 || filteredCombinations.length <= 1}
-              onClick={() => {
-                setCurrIndex(prev => prev + 1)
-              }}
-              aria-label="next-pega-combination"
-            >
-              <NavigateNextIcon />
-            </IconButton>
-          </Container>
-      </Container>}
-          {filteredCombinations.length <= 1  &&
-            <Typography sx={{ fontSize: 14 }} color="text.primary">
-              There are no more combinations for your current settings
-            </Typography>}
-      <SettingsPanel settings={settings} setSettings={setSettings} />
-    </Box>}
-  </Container>
+              <Tooltip title="Don't show combinations using these pegas">
+                <span>
+                  <IconButton
+                  onClick={addPegasToseenSet}
+                  disabled={filteredCombinations.length <= 1}
+                  >
+                    <CheckIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <IconButton
+                disabled={currIndex === filteredCombinations.length-1 || filteredCombinations.length <= 1}
+                onClick={() => {
+                  setCurrIndex(prev => prev + 1)
+                }}
+                aria-label="next-pega-combination"
+              >
+                <NavigateNextIcon />
+              </IconButton>
+            </Container>
+        </Container>}
+        <SettingsPanel settings={settings} setSettings={setSettings} />
+        {filteredCombinations.length <= 1  &&
+          <Container sx={{ textAlign: 'center'}}>
+              <Typography sx={{ fontSize: 14 }} color="text.primary">
+                There are no more combinations for your current settings
+              </Typography>
+          </Container>}
+      </Box>}
+    </Container>
+    </>
   );
 }
 

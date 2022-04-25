@@ -1,17 +1,20 @@
 import React from "react";
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import FormGroup from '@mui/material/FormGroup';
 import CenteredContainer from "./CenteredContainer";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import Tooltip from '@mui/material/Tooltip';
 
 const SearchButton = ({ onClick }) => (
-    <IconButton onClick={onClick}>
-      <SearchIcon />
-    </IconButton>
+    <Tooltip title="Search">
+        <span>
+            <IconButton onClick={onClick}>
+                <SearchIcon />
+            </IconButton>
+        </span>
+    </Tooltip>
   );
 
 const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, error, setError }) => {
@@ -21,7 +24,6 @@ const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, err
                 <Typography variant="body">{text}</Typography>
             </Box>
             <CenteredContainer maxWidth="md">
-                <FormGroup row>
                     <TextField
                      value={value}
                      onChange={(event) => {
@@ -32,9 +34,8 @@ const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, err
                      variant="outlined"
                      error={error !== ''}
                      helperText={error ? error : ''}
-                     InputProps={{ endAdornment: <SearchButton aria-label='search' onClick={submitHandler} /> }}
+                     InputProps={{ endAdornment: <SearchButton aria-label='Search' onClick={submitHandler} /> }}
                     />
-                </FormGroup>
             </CenteredContainer>
         </Box>
     );

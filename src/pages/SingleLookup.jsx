@@ -8,6 +8,7 @@ import CenteredContainer from "../components/CenteredContainer";
 import { getStatsFromJson, getMetaScore } from "../util/helpers";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 
 const SingleLookup = ({ model }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,6 +73,11 @@ const SingleLookup = ({ model }) => {
   }
 
   return (
+    <>
+      <Helmet>
+        <title>Pega Lookup</title>
+        <meta name="description" content="Look up stats and average vis earnings for an existing pega." />
+      </Helmet>
       <Container maxWidth="md" sx = {{ display:'flex', flexDirection: 'column', gap: '10px' }}>
         <SearchBar
           searchLabel={"PegaID"}
@@ -88,6 +94,7 @@ const SingleLookup = ({ model }) => {
           {actualPega}
         </CenteredContainer>
       </Container>
+    </>
   );
 }
 

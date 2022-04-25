@@ -6,6 +6,7 @@ import { createDataSetFromJson } from "../util/model";
 import PegaTable from "../components/PegaTable";
 import { calculateAvgVis, getMetaScore, loadAddress, saveAddress } from "../util/helpers";
 import CenteredContainer from "../components/CenteredContainer";
+import { Helmet } from 'react-helmet';
 
 
 const AccountLookup = ({ model }) => {
@@ -32,23 +33,29 @@ const AccountLookup = ({ model }) => {
   }
 
   return (
-    <Container maxWidth="max" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <SearchBar
-        searchLabel={"Wallet address"}
-        text={"Enter a polygon wallet address"}
-        submitHandler={handleSubmit}
-        value={searchValue}
-        changeHandler={setSearchValue}
-        error={searchError}
-        setError={setSearchError}
-      />
-      {loading &&
-      <CenteredContainer>
-        <CircularProgress />
-      </CenteredContainer>
-      }
-      {accountPegas.length !== 0 && <PegaTable rows={accountPegas}/>}
-  </Container>
+    <>
+      <Helmet>
+        <title>Account Lookup</title>
+        <meta name="description" content="Look at pegas stats and average vis earnings for an entire account." />
+      </Helmet>
+      <Container maxWidth="max" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <SearchBar
+          searchLabel={"Wallet address"}
+          text={"Enter a polygon wallet address:"}
+          submitHandler={handleSubmit}
+          value={searchValue}
+          changeHandler={setSearchValue}
+          error={searchError}
+          setError={setSearchError}
+          />
+        {loading &&
+        <CenteredContainer>
+          <CircularProgress />
+        </CenteredContainer>
+        }
+        {accountPegas.length !== 0 && <PegaTable rows={accountPegas}/>}
+      </Container>
+    </>
   );
 }
 
