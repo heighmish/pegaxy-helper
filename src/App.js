@@ -48,7 +48,6 @@ function App() {
               <Route path="account-lookup" element={<AccountLookup model={model}/>} />
               <Route path="breed-helper" element={<BreedHelper model={model}/>} />
               <Route path="*" element={<Home/>} />
-
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

@@ -16,7 +16,7 @@ const StatBar = ({ speed, strength, lightning, wind, water, fire, pos }) => {
                 <StatIcon color={orange[500]} value={speed} icon={<SpeedIcon/>}/>
                 <StatIcon color={green[500]} value={strength} icon={<FitnessCenterIcon/>}/>
                 <StatIcon color={yellow[500]} value={lightning} icon={<BoltIcon/>}/>
-                <StatIcon color={'white'} value={wind} icon={<AirIcon/>}/>
+                <StatIcon color={'lightgrey'} value={wind} icon={<AirIcon/>}/>
                 <StatIcon color={blue[500]} value={water} icon={<WaterIcon/>}/>
                 <StatIcon color={red[500]} value={fire} icon={<LocalFireDepartmentIcon/>}/>
             </Box>

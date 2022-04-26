@@ -37,6 +37,7 @@ const SearchBar = ({ searchLabel, submitHandler, text, changeHandler, value, err
           error={error !== ''}
           helperText={error ? error : ''}
           InputProps={{ endAdornment: <SearchButton onClick={submitHandler} /> }}
+          onKeyDown={ev => ev.key === 'Enter' ? submitHandler(): () => {}}
         />
       </CenteredContainer>
     </Box>

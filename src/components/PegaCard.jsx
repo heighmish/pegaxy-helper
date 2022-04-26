@@ -9,68 +9,68 @@ import Typography from '@mui/material/Typography';
 import { calculateAvgVis } from '../util/helpers';
 import StatBar from './StatBar';
 
-const PegaCard = ({id, bloodLine, name, breedCount, breedType, energy, canBreedAt, canRaceAt, gender, winRate, gold, silver, bronze, totalRaces, motherId, fatherId, speed, strength, lightning, wind, water, fire, metaScore, nav}) => {
+const PegaCard = ({ pegaData, metascore, onClick}) => {
     const [avgVis, setAvgVis] = useState(0);
     useEffect(() => {
-        const val = calculateAvgVis(gold, silver, bronze, totalRaces, breedType);
+        const val = calculateAvgVis(pegaData.gold, pegaData.silver, pegaData.bronze, pegaData.totalRaces, pegaData.breedType);
         setAvgVis(Number(val));
-    }, [bronze, gold, silver, totalRaces, breedType])
+    }, [pegaData.bronze, pegaData.gold, pegaData.silver, pegaData.totalRaces, pegaData.breedType])
     return (
         <Card>
             <CardContent>
                 <Box sx= {{ display: 'flex', justifyContent: 'space-between'}}>
                 <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                    {`#${id}`}
+                    {`#${pegaData.id}`}
                 </Typography>
                 <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                    {`Breedcount: ${breedCount}/7`}
+                    {`Breedcount: ${pegaData.breedCount}/7`}
                 </Typography>
                 </Box>
                 <Typography variant="h5" component="div">
-                    {name}
+                    {pegaData.name}
                 </Typography>
             <   Box sx= {{ display: 'flex', justifyContent: 'space-between'}}>
                     <Typography sx={{ fontSize: 16, mb: 1 }} color="text.secondary">
-                        {breedType} | {bloodLine} | {gender}
+                        {pegaData.breedType} | {pegaData.bloodLine} | {pegaData.gender}
                     </Typography>
                     <Typography sx={{ fontSize: 15}} color="text.secondary">
-                        {`Energy: ${energy}/25`}
+                        {`Energy: ${pegaData.energy}/25`}
                     </Typography>
                 </Box>
                 <Box sx= {{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
                     <Box sx= {{ display: 'flex', gap: '10px'}}>
                         <Box sx= {{ display: 'flex', flexDirection: 'column', gap: '2.5px'}}>
                             <Typography sx={{ fontSize: 14 }} color="text.primary">
-                                {`Winrate: ${(winRate*100).toFixed(0)}%`}
+                                {`Winrate: ${(pegaData.winRate*100).toFixed(0)}%`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                {`Gold: ${((gold/totalRaces)*100).toFixed(0)}%`}
+                                {`Gold: ${((pegaData.gold/pegaData.totalRaces)*100).toFixed(0)}%`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                {`Silver: ${((silver/totalRaces)*100).toFixed(0)}%`}
+                                {`Silver: ${((pegaData.silver/pegaData.totalRaces)*100).toFixed(0)}%`}
                             </Typography><Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                {`Bronze: ${((bronze/totalRaces)*100).toFixed(0)}%`}
+                                {`Bronze: ${((pegaData.bronze/pegaData.totalRaces)*100).toFixed(0)}%`}
                             </Typography>
                         </Box>
                         <Box>
                             <Typography sx={{ fontSize: 15 }} color="text.primary">
-                                {`${totalRaces} Total races`}
+                                {`${pegaData.totalRaces} Total races`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
                                 {`Avg Vis: ${avgVis.toFixed(2)}`}
                             </Typography>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                {`MetaScore: ${metaScore}/10`}
+                                {`MetaScore: ${metascore}/10`}
                             </Typography>
                         </Box>
                     </Box>
-                    <StatBar speed={speed} strength={strength} fire={fire} lightning={lightning} water={water} wind={wind} />
+                    <StatBar speed={pegaData.speed} strength={pegaData.strength} fire={pegaData.fire} lightning={pegaData.lightning} water={pegaData.water} wind={pegaData.wind} />
                 </Box>
             </CardContent>
-            <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button size="small" onClick={() => nav(motherId)}>Mother {motherId}</Button>
-                <Button size="small" onClick={() => nav(fatherId)}>Father {fatherId}</Button>
-            </CardActions>
+            {pegaData.motherId !== null && <CardActions sx={{ justifyContent: 'space-between' }}>
+                <Button size="small" onClick={() => onClick(pegaData.motherId)} >Mother {pegaData.motherId}</Button>
+                <Button size="small" onClick={() => onClick(pegaData.fatherId)}>Father {pegaData.fatherId}</Button>
+            </CardActions>}
         </Card>
     );
 }

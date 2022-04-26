@@ -4,8 +4,9 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
-const HomeCard = ({ title, description,  linkHref, linkName }) => {
+const HomeCard = ({ title, description, linkHref }) => {
   return (
     <Card sx={{ minWidth: 285 }}>
       <CardContent>
@@ -16,7 +17,8 @@ const HomeCard = ({ title, description,  linkHref, linkName }) => {
          {description}
         </Typography>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ justifyContent: 'flex-end' }}>
+        <Button component={Link} to={linkHref}>{title}</Button>
       </CardActions>
     </Card>
   );

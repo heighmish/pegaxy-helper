@@ -3,39 +3,38 @@ import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import { apiCall } from "../util/api";
 import { getModelPrediction } from "../util/model";
-import { createPegaCard } from "../util/createPegaCard";
 import CenteredContainer from "../components/CenteredContainer";
 import { getStatsFromJson, getMetaScore } from "../util/helpers";
 import CircularProgress from '@mui/material/CircularProgress';
-import { useSearchParams } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
+import PegaCard from '../components/PegaCard';
 
 const SingleLookup = ({ model }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [searchValue, setSearchValue] = useState(searchParams.get('pega') || '');
+  const [searchValue, setSearchValue] = useState('');
   const [predictedPega, setPredictedPega] = useState(false);
   const [actualPega, setActualPega] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchError, setSearchError] = useState('');
 
-  const handleSubmit = async () => {
-    if (!searchValue) {
+  const handleSubmit = async (ev, val=undefined) => {
+    const value = val ?? searchValue;
+    if (!value) {
       setSearchError("Please enter a value");
       return;
     }
     setLoading(true);
     setPredictedPega(false);
     setActualPega(false);
-    if (searchValue.includes(',')) {
+    if (value.includes(',')) {
       // Array prediction
-      await statsPrediction(searchValue.split(','));
+      await statsPrediction(value.split(','));
       setLoading(false);
       return;
     }
     // Add more error checking
     try {
-      const pega = await apiCall(`pegas/${searchValue}`, {}, 'GET');
-      await realPrediction(pega);
+      const pega = await apiCall(`pegas/${value}`, {}, 'GET');
+      await realPrediction(pega, value);
       setLoading(false);
     } catch (err) {
       setSearchError(err.message);
@@ -43,13 +42,18 @@ const SingleLookup = ({ model }) => {
     }
   }
 
-  const realPrediction = async (pega) => {
+  const realPrediction = async (pega, id) => {
     try {
+      if (pega.ownerAddress === '0x000000000000000000000000000000000000dEaD') {
+        setSearchError(`Invalid ID, pega ${id} has been burned`);
+        setLoading(false);
+        return;
+      }
       const numbers = getStatsFromJson(pega);
-      const prediction = await getModelPrediction(numbers, model);
+      const prediction = getMetaScore(await getModelPrediction(numbers, model));
       const accountData = await apiCall(`pegas/owner/user/${pega.ownerAddress}`)
-      const allPegaData = accountData.find(pega => pega.id === Number(searchValue));
-      setActualPega(createPegaCard(allPegaData, prediction, searchValue));
+      const pegaData = accountData.find(pega => pega.id === Number(id));
+      setActualPega({pegaData, prediction});
     } catch (err) {
       setSearchError(err.message);
       setLoading(false);
@@ -72,6 +76,10 @@ const SingleLookup = ({ model }) => {
     setPredictedPega(getMetaScore(prediction));
   }
 
+  const loadPega = async (id) => {
+    await handleSubmit(null, id.toString());
+  }
+
   return (
     <>
       <Helmet>
@@ -91,7 +99,7 @@ const SingleLookup = ({ model }) => {
         <CenteredContainer>
           {loading && <CircularProgress />}
           {predictedPega && <div>Expected metascore for those stats are {predictedPega} </div>}
-          {actualPega}
+          {actualPega && <PegaCard pegaData={actualPega.pegaData} metascore={actualPega.prediction} onClick={loadPega}/>}
         </CenteredContainer>
       </Container>
     </>

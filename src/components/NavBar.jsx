@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 
@@ -21,7 +20,6 @@ const pages = [
 const NavBar = ({ colourScheme, setColourScheme}) => {
   const location = useLocation();
   const theme = useTheme();
-  console.log(theme)
   const smallScreen = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <AppBar position="static" component={'nav'} sx={{ background: colourScheme ? '' : '#fff'}}>
