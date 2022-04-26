@@ -9,6 +9,7 @@ export default function StatIcon({ icon, color, value }) {
         <Box sx={{ m: 1, position: 'relative' }}>
         {icon}
         <CircularProgress
+            role='none'
             variant='determinate'
             value={((value/9)*100)}
             size={35}

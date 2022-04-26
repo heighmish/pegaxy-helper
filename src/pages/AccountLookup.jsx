@@ -6,7 +6,7 @@ import { createDataSetFromJson } from "../util/model";
 import PegaTable from "../components/PegaTable";
 import { calculateAvgVis, getMetaScore, loadAddress, saveAddress } from "../util/helpers";
 import CenteredContainer from "../components/CenteredContainer";
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 
 const AccountLookup = ({ model }) => {

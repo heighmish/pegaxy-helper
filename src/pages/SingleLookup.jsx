@@ -8,7 +8,7 @@ import CenteredContainer from "../components/CenteredContainer";
 import { getStatsFromJson, getMetaScore } from "../util/helpers";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSearchParams } from "react-router-dom";
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const SingleLookup = ({ model }) => {
   const [searchParams, setSearchParams] = useSearchParams();

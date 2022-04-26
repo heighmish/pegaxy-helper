@@ -1,33 +1,58 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
+import Container from '@mui/material/Container'
+import Box from '@mui/material/Box'
 
-const NavBar = () => {
-    return (
-      <AppBar position="static">
-            <Toolbar disableGutters>
-                <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                sx={{ m: 2, display: { xs: 'none', md: 'flex' } }}>
-                LOGO
-                </Typography>
-                <MenuItem component={Link} to={"pega-lookup"}>
-                    <Typography textAlign="center" sx={{ my: 2, color: 'white', display: 'block' }}>Pega Lookup</Typography> 
-                </MenuItem>
-                <MenuItem component={Link} to={"account-lookup"}>
-                    <Typography textAlign="center" sx={{ my: 2, color: 'white', display: 'block' }}>Account Lookup</Typography> 
-                </MenuItem>
-                <MenuItem component={Link} to={"breed-helper"}>
-                    <Typography textAlign="center" sx={{ my: 2, color: 'white', display: 'block' }}>Breed Helper</Typography> 
-                </MenuItem>
-            </Toolbar>
-      </AppBar>
-    );
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import ToggleThemeButton from "./ToggleThemeButton";
+
+const pages = [
+  ['Home', ''],
+  ['Pega Lookup', 'pega-lookup'],
+  ['Account Lookup', 'account-lookup'],
+  ['Breed Helper', 'breed-helper'],
+]
+
+const NavBar = ({ colourScheme, setColourScheme}) => {
+  const location = useLocation();
+  const theme = useTheme();
+  console.log(theme)
+  const smallScreen = useMediaQuery(theme.breakpoints.up('sm'));
+  return (
+    <AppBar position="static" component={'nav'} sx={{ background: colourScheme ? '' : '#fff'}}>
+      <Container maxWidth="xl">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Tabs
+            value={location.pathname}
+            variant={smallScreen ? 'standard': 'fullWidth'}
+            scrollButtons={false}
+            >
+              {pages.map(page => 
+                <Tab 
+                key={page}
+                sx={{
+                  textTransform: 'capitalize',
+                  fontSize: '16px',
+                  color: theme.palette.text.primary,
+                  paddingInline: '8px',
+                }}
+                label={page[0]}
+                value={`/${page[1]}`}
+                component={Link}
+                to={page[1]}
+                />
+              )}
+            </Tabs>
+            {useMediaQuery('(min-width: 420px)') && <ToggleThemeButton colourScheme={colourScheme} setColourScheme={setColourScheme}/>}
+          </Box>
+      </Container>
+    </AppBar>
+  );
 }
 
 export default NavBar;

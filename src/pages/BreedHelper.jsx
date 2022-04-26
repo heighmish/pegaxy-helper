@@ -16,7 +16,7 @@ import CenteredContainer from "../components/CenteredContainer";
 import SettingsPanel from "../components/SettingsPanel";
 import { bloodLineTimers} from "../config";
 import Tooltip from '@mui/material/Tooltip';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const BreedHelper = ({ model }) => {
   const [searchValue, setSearchValue] = useState(loadAddress());
@@ -157,7 +157,7 @@ const BreedHelper = ({ model }) => {
           setError={setSearchError}
         />
         <CenteredContainer>
-          {loading && <CircularProgress />}
+          {loading && <CircularProgress disableShrink/>}
         </CenteredContainer>
         {!loading && accountPegas.length !== 0 &&
         <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start'}}>
@@ -218,11 +218,12 @@ const BreedHelper = ({ model }) => {
                 <NavigateBeforeIcon />
               </IconButton>
 
-              <Tooltip title="Don't show combinations using these pegas">
+              <Tooltip title="Do not show more combinations with current pegas">
                 <span>
                   <IconButton
                   onClick={addPegasToseenSet}
                   disabled={filteredCombinations.length <= 1}
+                  aria-label="Do not show more combinations with current pegas"
                   >
                     <CheckIcon />
                   </IconButton>

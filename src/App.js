@@ -3,11 +3,13 @@ import { BrowserRouter, Routes, Route} from "react-router-dom";
 import SingleLookup from './pages/SingleLookup';
 import AccountLookup from './pages/AccountLookup';
 import BreedHelper from './pages/BreedHelper';
+import Home from './pages/Home';
 import NavBar from "./components/NavBar";
 import * as tf from '@tensorflow/tfjs';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { HelmetProvider } from 'react-helmet-async';
 
 
 function App() {
@@ -19,35 +21,38 @@ function App() {
         setModel(model);
       } catch (err){
         console.log(err);
+        alert("Machine learning model failed to load, metascore predictions will be unavailable.")
       }
     }
     loadModel();
   }, [])
-
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [colourScheme, setColourScheme] = useState(useMediaQuery('(prefers-color-scheme: dark)'));
   const theme = React.useMemo(
     () =>
       createTheme({
         palette: {
-          mode: prefersDarkMode ? 'dark' : 'light',
+          mode: colourScheme ? 'dark' : 'light',
         },
       }),
-    [prefersDarkMode],
+    [colourScheme],
   );
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <NavBar />
-          <Routes>
-            <Route path="/" element={<SingleLookup model={model}/>} />
-            <Route path="/pegaxy-helper" element={<SingleLookup model={model}/>} />
-            <Route path="pega-lookup" element={<SingleLookup model={model}/>} />
-            <Route path="account-lookup" element={<AccountLookup model={model}/>} />
-            <Route path="breed-helper" element={<BreedHelper model={model}/>} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <NavBar colourScheme={colourScheme} setColourScheme={setColourScheme}/>
+            <Routes>
+              <Route path="/" element={<Home/>} />
+              <Route path="pega-lookup" element={<SingleLookup model={model}/>} />
+              <Route path="account-lookup" element={<AccountLookup model={model}/>} />
+              <Route path="breed-helper" element={<BreedHelper model={model}/>} />
+              <Route path="*" element={<Home/>} />
+
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
 
