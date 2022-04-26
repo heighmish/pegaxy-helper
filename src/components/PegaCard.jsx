@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { calculateAvgVis } from '../util/helpers';
 import StatBar from './StatBar';
 
-const PegaCard = ({ pegaData, metascore, onClick}) => {
+const PegaCard = ({ pegaData, metascore, onClick, disabled=false}) => {
     const [avgVis, setAvgVis] = useState(0);
     useEffect(() => {
         const val = calculateAvgVis(pegaData.gold, pegaData.silver, pegaData.bronze, pegaData.totalRaces, pegaData.breedType);
@@ -68,8 +68,8 @@ const PegaCard = ({ pegaData, metascore, onClick}) => {
                 </Box>
             </CardContent>
             {pegaData.motherId !== null && <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button size="small" onClick={() => onClick(pegaData.motherId)} >Mother {pegaData.motherId}</Button>
-                <Button size="small" onClick={() => onClick(pegaData.fatherId)}>Father {pegaData.fatherId}</Button>
+                <Button disabled={disabled} size="small" onClick={() => onClick(pegaData.motherId)} >Mother {pegaData.motherId}</Button>
+                <Button disabled={disabled} size="small" onClick={() => onClick(pegaData.fatherId)} >Father {pegaData.fatherId}</Button>
             </CardActions>}
         </Card>
     );

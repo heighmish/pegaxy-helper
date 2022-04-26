@@ -2,9 +2,9 @@
 
 # Important
 
-- [] Click item on table, expands to show more information, probably a pega card
-- [] Remove unused table things like checkboxs
 - [] Component testing
+- [x] Click item on table, expands to show more information, probably a pega card
+- [x] Remove unused table things like checkboxs
 - [x] Pegacard click parent to link to something
 - [x] Pegas that have been burned dont break search, owneraccount is set to burn address 0x000...
 - [x] Explaination of metascore, probably a separate page.
