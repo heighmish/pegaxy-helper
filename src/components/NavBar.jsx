@@ -12,9 +12,9 @@ import ToggleThemeButton from "./ToggleThemeButton";
 
 const pages = [
   ['Home', ''],
-  ['Pega Lookup', 'pega-lookup'],
-  ['Account Lookup', 'account-lookup'],
-  ['Breed Helper', 'breed-helper'],
+  ['Pega Lookup', '/pega-lookup'],
+  ['Account Lookup', '/account-lookup'],
+  ['Breed Helper', '/breed-helper'],
 ]
 
 const NavBar = ({ colourScheme, setColourScheme}) => {

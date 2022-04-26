@@ -44,9 +44,9 @@ function App() {
           <NavBar colourScheme={colourScheme} setColourScheme={setColourScheme}/>
             <Routes>
               <Route path="/" element={<Home/>} />
-              <Route path="pega-lookup" element={<SingleLookup model={model}/>} />
-              <Route path="account-lookup" element={<AccountLookup model={model}/>} />
-              <Route path="breed-helper" element={<BreedHelper model={model}/>} />
+              <Route path="/pega-lookup" element={<SingleLookup model={model}/>} />
+              <Route path="/account-lookup" element={<AccountLookup model={model}/>} />
+              <Route path="/breed-helper" element={<BreedHelper model={model}/>} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
