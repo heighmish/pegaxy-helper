@@ -42,21 +42,21 @@ const Home = () => {
             <HomeCard
               title="Pega Lookup"
               description="Look up a pegas ID to see useful information, such as stats, average vis the pega earns per race and a metascore. Alternatively, enter in stats of a pega to get an AI predicted metascore."
-              linkHref = "/pegaxy-helper/pega-lookup"
+              linkHref = "pega-lookup"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <HomeCard
               title="Account Lookup"
               description="Look up a wallet address, shows average vis earnings, metascores, stats and more for all pegas in an account."
-              linkHref = "/pegaxy-helper/account-lookup"
+              linkHref = "account-lookup"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <HomeCard
               title="Breed Helper"
               description="Uses AI to find good pega candidate parents to breed with for a wallet."
-              linkHref = "/pegaxy-helper/breed-helper"
+              linkHref = "breed-helper"
             />
           </Grid>
         </Grid>

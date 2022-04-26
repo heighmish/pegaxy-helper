@@ -11,10 +11,10 @@ import { useTheme } from '@mui/material/styles';
 import ToggleThemeButton from "./ToggleThemeButton";
 
 const pages = [
-  ['Home', '/pegaxy-helper'],
-  ['Pega Lookup', '/pegaxy-helper/pega-lookup'],
-  ['Account Lookup', '/pegaxy-helper/account-lookup'],
-  ['Breed Helper', '/pegaxy-helper/breed-helper'],
+  ['Home', ''],
+  ['Pega Lookup', 'pega-lookup'],
+  ['Account Lookup', 'account-lookup'],
+  ['Breed Helper', 'breed-helper'],
 ]
 
 const NavBar = ({ colourScheme, setColourScheme}) => {
