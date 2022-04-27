@@ -10,6 +10,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { HelmetProvider } from 'react-helmet-async';
+import ReactGA from 'react-ga';
+
+const TRACKING_ID = 'UA-226866037-1';
+ReactGA.initialize(TRACKING_ID);
 
 
 function App() {
@@ -36,6 +40,10 @@ function App() {
       }),
     [colourScheme],
   );
+
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, [])
   return (
     <HelmetProvider>
       <ThemeProvider theme={theme}>
