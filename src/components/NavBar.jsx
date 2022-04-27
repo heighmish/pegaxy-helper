@@ -40,7 +40,7 @@ const NavBar = ({ colourScheme, setColourScheme}) => {
                   paddingInline: '8px',
                 }}
                 label={page[0]}
-                value={`/${page[1]}`}
+                value={page[1]}
                 component={Link}
                 to={page[1]}
                 />
