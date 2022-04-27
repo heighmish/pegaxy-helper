@@ -1,7 +1,6 @@
 {
   "name": "pegaxy-helper",
   "version": "0.1.0",
-  "homepage": "https://heighmish.github.io/pegaxy-helper",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.2",
