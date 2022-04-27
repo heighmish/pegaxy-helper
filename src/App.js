@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route} from "react-router-dom";
+import { Routes, Route, useLocation} from "react-router-dom";
 import SingleLookup from './pages/SingleLookup';
 import AccountLookup from './pages/AccountLookup';
 import BreedHelper from './pages/BreedHelper';
@@ -9,12 +9,18 @@ import * as tf from '@tensorflow/tfjs';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { HelmetProvider } from 'react-helmet-async';
 import ReactGA from 'react-ga';
 
 const TRACKING_ID = 'UA-226866037-1';
 ReactGA.initialize(TRACKING_ID);
 
+const usePageViews = () => {
+  const location = useLocation();
+  useEffect(() => {
+    ReactGA.set({ page: location.pathname });
+    ReactGA.pageview(location.pathname);
+  }, [location])
+}
 
 function App() {
   const [model, setModel] = useState(null);
@@ -40,15 +46,10 @@ function App() {
       }),
     [colourScheme],
   );
-
-  useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
-  }, [])
+  usePageViews();
   return (
-    <HelmetProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <BrowserRouter>
           <NavBar colourScheme={colourScheme} setColourScheme={setColourScheme}/>
             <Routes>
               <Route path="/" element={<Home/>} />
@@ -56,9 +57,7 @@ function App() {
               <Route path="/account-lookup" element={<AccountLookup model={model}/>} />
               <Route path="/breed-helper" element={<BreedHelper model={model}/>} />
           </Routes>
-        </BrowserRouter>
       </ThemeProvider>
-    </HelmetProvider>
   );
 }
 
