@@ -15,8 +15,8 @@
 - [] Check whether eth addresses prefixed by 0x and are correct characters long
 - [] Limit number of requests users can send through, dont allow spamming search, maybe dont allow search if loading?
 - [] Meta tags/ SEO
-- [] Google analytics
 - [] Rewrite descriptions of tooltips/ meta tags etc
+- [x] Google analytics
 - [x] Lightmode wind border doesnt show up, (white on white)
 - [x] Accessibility labels nav links
 - [x] Change between light and dark theme

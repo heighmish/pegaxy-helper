@@ -12,8 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import ReactGA from 'react-ga';
 
 const TRACKING_ID = 'UA-226866037-1';
-ReactGA.initialize(TRACKING_ID, {debug: true});
-console.log(ReactGA);
+ReactGA.initialize(TRACKING_ID);
 
 const usePageViews = () => {
   const location = useLocation();
