@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material/styles';
 import ToggleThemeButton from "./ToggleThemeButton";
 
 const pages = [
-  ['Home', ''],
+  ['Home', '/'],
   ['Pega Lookup', '/pega-lookup'],
   ['Account Lookup', '/account-lookup'],
   ['Breed Helper', '/breed-helper'],
